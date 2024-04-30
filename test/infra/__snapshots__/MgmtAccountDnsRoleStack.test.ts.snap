@@ -1,0 +1,252 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Matches snapshot 1`] = `
+{
+  "Outputs": {
+    "CrossAccountDelegationRoleArn": {
+      "Description": "CrossAccountDelegationRoleArn",
+      "Value": {
+        "Fn::GetAtt": [
+          "CrossAccountRoleFACE29D1",
+          "Arn",
+        ],
+      },
+    },
+  },
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": {
+    "CrossAccountRoleDefaultPolicy212A317F": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "route53:ChangeResourceRecordSets",
+              "Condition": {
+                "ForAllValues:StringEquals": {
+                  "route53:ChangeResourceRecordSetsActions": [
+                    "UPSERT",
+                    "DELETE",
+                  ],
+                  "route53:ChangeResourceRecordSetsRecordTypes": [
+                    "NS",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":route53:::hostedzone/",
+                    {
+                      "Ref": "HostedZoneDB99F866",
+                    },
+                  ],
+                ],
+              },
+            },
+            {
+              "Action": "route53:ListHostedZonesByName",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": "route53:ChangeResourceRecordSets",
+              "Condition": {
+                "ForAllValues:StringEquals": {
+                  "route53:ChangeResourceRecordSetsActions": [
+                    "UPSERT",
+                    "DELETE",
+                  ],
+                  "route53:ChangeResourceRecordSetsRecordTypes": [
+                    "NS",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":route53:::hostedzone/",
+                    {
+                      "Ref": "HostedZoneAdminA7C7F609",
+                    },
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "CrossAccountRoleDefaultPolicy212A317F",
+        "Roles": [
+          {
+            "Ref": "CrossAccountRoleFACE29D1",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "CrossAccountRoleFACE29D1": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":iam::123456789012:root",
+                    ],
+                  ],
+                },
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "route53:ListHostedZonesByName",
+                  "Effect": "Allow",
+                  "Resource": "*",
+                  "Sid": "ListHostedZonesByName",
+                },
+                {
+                  "Action": [
+                    "route53:GetHostedZone",
+                    "route53:ChangeResourceRecordSets",
+                  ],
+                  "Condition": {
+                    "ForAllValues:StringLike": {
+                      "route53:ChangeResourceRecordSetsNormalizedRecordNames": [
+                        "dev.fp.santee.cloud",
+                        "prod.fp.santee.cloud",
+                        "fp.santee.cloud",
+                        "fpadmin.santee.cloud",
+                        "dev.fpadmin.santee.cloud",
+                        "prod.fpadmin.santee.cloud",
+                      ],
+                    },
+                  },
+                  "Effect": "Allow",
+                  "Resource": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:aws:route53:::hostedzone/",
+                        {
+                          "Ref": "HostedZoneDB99F866",
+                        },
+                      ],
+                    ],
+                  },
+                  "Sid": "GetHostedZoneAndChangeResourceRecordSets",
+                },
+              ],
+              "Version": "2012-10-17",
+            },
+            "PolicyName": "crossAccountPolicy",
+          },
+        ],
+        "RoleName": "MyXAcctDelegationRole",
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "DomainNSRecordAdmin9B44FC4B": {
+      "Properties": {
+        "HostedZoneId": "Z02022183L2XHLGIP6A83",
+        "Name": "dev.pgadmin.santee.cloud.",
+        "ResourceRecords": {
+          "Fn::GetAtt": [
+            "HostedZoneAdminA7C7F609",
+            "NameServers",
+          ],
+        },
+        "TTL": "172800",
+        "Type": "NS",
+      },
+      "Type": "AWS::Route53::RecordSet",
+    },
+    "HostedZoneAdminA7C7F609": {
+      "Properties": {
+        "Name": "dev.pgadmin.santee.cloud.",
+      },
+      "Type": "AWS::Route53::HostedZone",
+    },
+    "HostedZoneDB99F866": {
+      "Properties": {
+        "Name": "pg.santee.cloud.",
+      },
+      "Type": "AWS::Route53::HostedZone",
+    },
+    "SubDomainNSRecordBDFBB65E": {
+      "Properties": {
+        "HostedZoneId": "Z02022183L2XHLGIP6A83",
+        "Name": "pg.santee.cloud.",
+        "ResourceRecords": {
+          "Fn::GetAtt": [
+            "HostedZoneDB99F866",
+            "NameServers",
+          ],
+        },
+        "TTL": "172800",
+        "Type": "NS",
+      },
+      "Type": "AWS::Route53::RecordSet",
+    },
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
+}
+`;

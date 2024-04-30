@@ -1,0 +1,9 @@
+cdk.out
+cdk.json
+**/*.html
+package.json
+package-lock.json
+tsconfig.json
+README.md
+eslint.config.mjs
+jest.config.js

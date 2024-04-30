@@ -1,0 +1,228 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Matches snapshot 1`] = `
+{
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": {
+    "CrossAccountZoneDelegationRecordCrossAccountZoneDelegationCustomResourceE78B0799": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "CrossAccountZoneDelegationRecordcrossaccountzonedelegationhandlerrolePolicy7D87EC56",
+      ],
+      "Properties": {
+        "AssumeRoleArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":iam::123456789012:role/MyXAcctDelegationRole",
+            ],
+          ],
+        },
+        "AssumeRoleRegion": "us-east-1",
+        "DelegatedZoneName": "prod.pg.santee.cloud",
+        "DelegatedZoneNameServers": {
+          "Fn::GetAtt": [
+            "Route53FPSubZoneFFAE6E0D",
+            "NameServers",
+          ],
+        },
+        "ParentZoneName": "pg.santee.cloud",
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomCrossAccountZoneDelegationCustomResourceProviderHandler44A84265",
+            "Arn",
+          ],
+        },
+        "TTL": 172800,
+      },
+      "Type": "Custom::CrossAccountZoneDelegation",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "CrossAccountZoneDelegationRecordcrossaccountzonedelegationhandlerrolePolicy7D87EC56": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":iam::123456789012:role/MyXAcctDelegationRole",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "CrossAccountZoneDelegationRecordcrossaccountzonedelegationhandlerrolePolicy7D87EC56",
+        "Roles": [
+          {
+            "Fn::Select": [
+              1,
+              {
+                "Fn::Split": [
+                  "/",
+                  {
+                    "Fn::Select": [
+                      5,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Fn::GetAtt": [
+                              "CustomCrossAccountZoneDelegationCustomResourceProviderRoleED64687B",
+                              "Arn",
+                            ],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "CustomCrossAccountZoneDelegationCustomResourceProviderHandler44A84265": {
+      "DependsOn": [
+        "CustomCrossAccountZoneDelegationCustomResourceProviderRoleED64687B",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "85d541e10871ed2e6dced66cbf72398d8833cfb715b66529e614fac17364e800.zip",
+        },
+        "Handler": "__entrypoint__.handler",
+        "MemorySize": 128,
+        "Role": {
+          "Fn::GetAtt": [
+            "CustomCrossAccountZoneDelegationCustomResourceProviderRoleED64687B",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs18.x",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "CustomCrossAccountZoneDelegationCustomResourceProviderRoleED64687B": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Sub": "arn:\${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "DelegatedZoneCert71201BFD": {
+      "Properties": {
+        "DomainName": "prod.pg.santee.cloud",
+        "DomainValidationOptions": [
+          {
+            "DomainName": "prod.pg.santee.cloud",
+            "HostedZoneId": {
+              "Ref": "Route53FPSubZoneFFAE6E0D",
+            },
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "WebPublicStack/DelegatedZoneCert",
+          },
+        ],
+        "ValidationMethod": "DNS",
+      },
+      "Type": "AWS::CertificateManager::Certificate",
+    },
+    "Route53FPSubZoneFFAE6E0D": {
+      "Properties": {
+        "Name": "prod.pg.santee.cloud.",
+      },
+      "Type": "AWS::Route53::HostedZone",
+    },
+    "mySsmParameter1B506219F": {
+      "Properties": {
+        "Name": "/account/fpSubdomainHostedZoneId",
+        "Type": "String",
+        "Value": {
+          "Ref": "Route53FPSubZoneFFAE6E0D",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "mySsmParameter72A709A2": {
+      "Properties": {
+        "Name": "/account/fpCertificateArn",
+        "Type": "String",
+        "Value": {
+          "Ref": "DelegatedZoneCert71201BFD",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
+}
+`;
