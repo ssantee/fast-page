@@ -17,8 +17,8 @@ import { Construct } from "constructs";
 import { constructIds } from "./constructIds";
 
 interface AuthProps extends StackProps {
-  photosBucket: IBucket;
-  AdminGroupName: string;
+  bucket: IBucket;
+  adminGroupName: string;
 }
 
 export class Auth extends Stack {
@@ -32,19 +32,9 @@ export class Auth extends Stack {
   constructor(scope: Construct, id: string, props: AuthProps) {
     super(scope, id, props);
 
-    this.createUserPool();
-    this.createUserPoolClient();
-    this.createIdentityPool();
-    this.createRoles(props.photosBucket);
-    this.attachRoles();
-    this.createAdminsGroup(props.AdminGroupName || "FastpageAdmins");
-  }
-
-  private createUserPool() {
     this.userPool = new UserPool(this, constructIds.UserPool, {
       selfSignUpEnabled: true,
       signInAliases: {
-        username: true,
         email: true,
       },
     });
@@ -52,9 +42,7 @@ export class Auth extends Stack {
     new CfnOutput(this, constructIds.UserPoolOutputPoolId, {
       value: this.userPool.userPoolId,
     });
-  }
 
-  private createUserPoolClient() {
     this.userPoolClient = this.userPool.addClient(constructIds.UserPoolClient, {
       authFlows: {
         adminUserPassword: true,
@@ -66,17 +54,7 @@ export class Auth extends Stack {
     new CfnOutput(this, constructIds.UserPoolClientOutputClientId, {
       value: this.userPoolClient.userPoolClientId,
     });
-  }
 
-  private createAdminsGroup(groupName: string) {
-    new CfnUserPoolGroup(this, constructIds.UserPoolGroupAdmin, {
-      userPoolId: this.userPool.userPoolId,
-      groupName: groupName,
-      roleArn: this.adminRole.roleArn,
-    });
-  }
-
-  private createIdentityPool() {
     this.identityPool = new CfnIdentityPool(this, constructIds.IdentityPool, {
       allowUnauthenticatedIdentities: true,
       cognitoIdentityProviders: [
@@ -89,9 +67,32 @@ export class Auth extends Stack {
     new CfnOutput(this, constructIds.IdentityPoolOutputRefId, {
       value: this.identityPool.ref,
     });
+
+    this.createRoles(props.bucket);
+
+    new CfnIdentityPoolRoleAttachment(this, constructIds.IdpRoleAttachment, {
+      identityPoolId: this.identityPool.ref,
+      roles: {
+        authenticated: this.authenticatedRole.roleArn,
+        unauthenticated: this.unAuthenticatedRole.roleArn,
+      },
+      roleMappings: {
+        adminsMapping: {
+          type: "Token",
+          ambiguousRoleResolution: "AuthenticatedRole",
+          identityProvider: `${this.userPool.userPoolProviderName}:${this.userPoolClient.userPoolClientId}`,
+        },
+      },
+    });
+
+    new CfnUserPoolGroup(this, constructIds.UserPoolGroupAdmin, {
+      userPoolId: this.userPool.userPoolId,
+      groupName: props.adminGroupName,
+      roleArn: this.adminRole.roleArn,
+    });
   }
 
-  private createRoles(photosBucket: IBucket) {
+  private createRoles(bucket: IBucket) {
     const cognitoFederatedPrincipal = "cognito-identity.amazonaws.com";
 
     this.authenticatedRole = new Role(
@@ -148,14 +149,14 @@ export class Auth extends Stack {
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ["s3:PutObject", "s3:PutObjectAcl"],
-        resources: [photosBucket.bucketArn + "/*"],
+        resources: [bucket.bucketArn + "/*"],
       }),
     );
     this.adminRole.addToPolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ["s3:ListBucket"],
-        resources: [photosBucket.bucketArn],
+        resources: [bucket.bucketArn],
       }),
     );
     this.adminRole.addToPolicy(
@@ -165,22 +166,5 @@ export class Auth extends Stack {
         resources: ["*"],
       }),
     );
-  }
-
-  private attachRoles() {
-    new CfnIdentityPoolRoleAttachment(this, constructIds.IdpRoleAttachment, {
-      identityPoolId: this.identityPool.ref,
-      roles: {
-        authenticated: this.authenticatedRole.roleArn,
-        unauthenticated: this.unAuthenticatedRole.roleArn,
-      },
-      roleMappings: {
-        adminsMapping: {
-          type: "Token",
-          ambiguousRoleResolution: "AuthenticatedRole",
-          identityProvider: `${this.userPool.userPoolProviderName}:${this.userPoolClient.userPoolClientId}`,
-        },
-      },
-    });
   }
 }
