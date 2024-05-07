@@ -8,3 +8,8 @@ node_modules
 # CDK asset staging directory
 .cdk.staging
 cdk.out
+
+# temporary measure to exclude some files
+# with high risk of secrets exposure.
+test/auth.test.ts
+test/AuthService.ts
