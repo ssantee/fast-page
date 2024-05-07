@@ -2,33 +2,14 @@ import * as cdk from "aws-cdk-lib";
 import { Template } from "aws-cdk-lib/assertions";
 import { MgmtAcctDNSRoleStack } from "../../src/infra/stacks/dns/MgmtAcctDNSRoleStack";
 import { describe } from "node:test";
-import { DomainEnv } from "../../src/shared/types";
+import { AppConfiguration } from "../../src/infra/util/AppConfiguration";
+import * as appConfig from "../../config/config.json";
 
 describe("MgmtAcctDNSRoleStack test suite", () => {
   let MgmtAcctDNSRoleStackTemplate: Template;
-  const envs: { [env: string]: DomainEnv } = {
-    dev: {
-      account: "123456789012",
-      region: "us-east-1",
-      domain: "dev.pg.santee.cloud",
-      adminDomain: "dev.pgadmin.santee.cloud",
-      apiDomain: "dev.pgapi.santee.cloud",
-    },
-    prod: {
-      account: "123456789012",
-      region: "us-east-1",
-      domain: "prod.pg.santee.cloud",
-      adminDomain: "prod.pgadmin.santee.cloud",
-      apiDomain: "prod.pgapi.santee.cloud",
-    },
-    root: {
-      account: "123456789012",
-      region: "us-east-1",
-      domain: "pg.santee.cloud",
-      adminDomain: "pgadmin.santee.cloud",
-      apiDomain: "pgapi.santee.cloud",
-    },
-  };
+  const appCfg = new AppConfiguration(appConfig, "prod");
+  const targetEnv = appCfg.targetEnv;
+  const mgmtEnv = appCfg.mgmtEnv;
 
   beforeAll(() => {
     const app = new cdk.App();
@@ -37,13 +18,13 @@ describe("MgmtAcctDNSRoleStack test suite", () => {
       "WebPublicStack",
       {
         env: {
-          account: envs.prod.account,
-          region: "us-east-1",
+          account: mgmtEnv.account,
+          region: mgmtEnv.region,
         },
-        mgmtEnv: envs.root,
-        targetEnv: envs.prod,
-        iamPrincipalAccountNo: envs.prod.account,
-        apiDomain: envs.root.apiDomain,
+        mgmtEnv: mgmtEnv,
+        targetEnv: targetEnv,
+        iamPrincipalAccountNo: mgmtEnv.account,
+        apiDomain: mgmtEnv.apiDomain,
       },
     );
     MgmtAcctDNSRoleStackTemplate = Template.fromStack(mgmtAcctDNSRoleStack);
@@ -65,7 +46,7 @@ describe("MgmtAcctDNSRoleStack test suite", () => {
                     {
                       Ref: "AWS::Partition",
                     },
-                    `:iam::${envs.prod.account}:root`,
+                    `:iam::${targetEnv.account}:root`,
                   ],
                 ],
               },
@@ -80,7 +61,7 @@ describe("MgmtAcctDNSRoleStack test suite", () => {
     MgmtAcctDNSRoleStackTemplate.hasResourceProperties(
       "AWS::Route53::RecordSet",
       {
-        Name: `${envs.root.domain}.`,
+        Name: `${mgmtEnv.domain}.`,
         Type: "NS",
       },
     );

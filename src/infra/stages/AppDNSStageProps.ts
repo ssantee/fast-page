@@ -1,12 +1,10 @@
 import { StageProps } from "aws-cdk-lib";
-import { DomainEnv } from "../../shared/types";
+import { EnvConfig } from "../util/AppConfiguration";
 
 export interface AppDNSStageProps extends StageProps {
-  deployEnv: string;
   assetsDir?: string;
-  allEnvs?: { [env: string]: DomainEnv };
-  mgmtEnv: DomainEnv;
-  targetEnv: DomainEnv;
+  mgmtEnv: EnvConfig;
+  targetEnv: EnvConfig;
   certificateArnParamName: string;
   certificateArnParamNameAdmin: string;
   subdomainHostedZoneIdParamName: string;

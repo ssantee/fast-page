@@ -1,0 +1,38 @@
+{
+  "environments": [
+    {
+      "name": "root",
+      "domain": "app.example.com",
+      "adminDomain": "app-admin.example.com",
+      "apiDomain": "app-api.example.com",
+      "account": "0123456789",
+      "region": "us-east-1"
+    },
+    {
+      "name": "dev",
+      "domain": "dev.app.example.com",
+      "adminDomain": "dev.app-admin.example.com",
+      "apiDomain": "dev.app-api.example.com",
+      "account": "1123456789",
+      "region": "us-east-1"
+    },
+    {
+      "name": "prod",
+      "domain": "prod.app.example.com",
+      "adminDomain": "prod.app-admin.example.com",
+      "apiDomain": "prod.app-api.example.com",
+      "account": "2123456789",
+      "region": "us-east-1"
+    }
+  ],
+  "parameterNames": {
+    "certificateArn": "/fp/CertificateArn",
+    "certificateArnAdmin": "/fp/adminCertificateArn",
+    "certificateArnApi": "/fp/CertificateArnApi",
+    "subdomainHostedZoneId": "/fp/subdomainHostedZoneId",
+    "adminSubdomainHostedZoneId": "/fp/adminSubdomainHostedZoneId",
+    "apiDomainHostedZoneId": "/fp/apidomainHostedZoneId",
+    "ddbTableName": "/fp/ddbTable",
+    "ddbTableArn": "/fp/ddbTableArn"
+  }
+}

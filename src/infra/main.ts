@@ -1,6 +1,7 @@
 import { App, Aspects, Tags } from "aws-cdk-lib";
 import { TagChecker } from "./aspects/TagChecker";
-import { DomainEnv } from "../shared/types";
+import { AppConfiguration } from "./util/AppConfiguration";
+import * as appConfig from "../../config/config.json";
 import { S3CloudfrontSiteStack } from "./stacks/s3-cloudfront-site/S3CloudfrontSiteStack";
 import { DNSStage } from "./stages/DNSStage";
 import { MgmtAcctDNSRoleStack } from "./stacks/dns/MgmtAcctDNSRoleStack";
@@ -10,70 +11,66 @@ import { Auth } from "./stacks/auth/Auth";
 
 const appName = "fast-page";
 const assetsDir = `${process.cwd()}/assets`;
-const deployEnv = process.env.DEPLOY_ENV;
 
-if (!deployEnv) {
-  throw new Error("Missing DEPLOY_ENV environment variable");
+const env = {
+  account: process.env.CDK_DEFAULT_ACCOUNT,
+  region: process.env.CDK_DEFAULT_REGION,
+};
+
+if (!process.env.DEPLOY_ENV) {
+  throw new Error(
+    "DEPLOY_ENV must be set before calling CDK CLI operations. e.g.:\n\n export DEPLOY_ENV=dev;cdk synth MyStack\n\n",
+  );
 }
 
+const deployEnv = process.env.DEPLOY_ENV;
+const appCfg = new AppConfiguration(appConfig, deployEnv);
+const targetEnv = appCfg.targetEnv;
+const mgmtEnv = appCfg.mgmtEnv;
+
 const app = new App();
-const envs: { [env: string]: DomainEnv } =
-  app.node.tryGetContext("environments");
-const targetEnv = deployEnv === "dev" ? envs.dev : envs.prod;
-const env = { account: targetEnv?.account, region: targetEnv?.region };
-
-const certificateArnParamName = "/fp/CertificateArn";
-const certificateArnParamNameAdmin = "/fp/adminCertificateArn";
-const certificateArnParamNameApi = "/fp/CertificateArnApi";
-
-const subdomainHostedZoneIdParamName = "/fp/subdomainHostedZoneId";
-const adminSubdomainHostedZoneIdParamName = "/fp/adminSubdomainHostedZoneId";
-const apidomainHostedZoneIdParamName = "/fp/apidomainHostedZoneId";
-
-const paramNameDDBTableName = "/fp/ddbTable";
-const paramNameDDBTableArn = "/fp/ddbTableArn";
 
 new MgmtAcctDNSRoleStack(app, `FastPageMgmtAcctDNSRoleStack`, {
-  env: { account: envs.root.account, region: envs.root.region },
+  env: { account: mgmtEnv.account, region: mgmtEnv.region },
   description: "Cross-account delegation role for Fast Page subdomains.",
-  mgmtEnv: envs.root,
+  mgmtEnv: mgmtEnv,
   targetEnv: targetEnv,
-  iamPrincipalAccountNo: envs.root.account,
-  apiDomain: envs.root.apiDomain,
+  iamPrincipalAccountNo: mgmtEnv.account,
+  apiDomain: mgmtEnv.apiDomain,
 });
 
 new DNSStage(app, `FastPageDNSStage`, {
   env: env,
-  deployEnv: deployEnv,
   assetsDir: assetsDir,
-  mgmtEnv: envs.root,
+  mgmtEnv: mgmtEnv,
   targetEnv: targetEnv,
-  certificateArnParamName: certificateArnParamName,
-  certificateArnParamNameAdmin: certificateArnParamNameAdmin,
-  subdomainHostedZoneIdParamName: subdomainHostedZoneIdParamName,
-  adminSubdomainHostedZoneIdParamName: adminSubdomainHostedZoneIdParamName,
-  certificateArnParamNameApi: certificateArnParamNameApi,
-  apiSubdomainHostedZoneIdParamName: apidomainHostedZoneIdParamName,
-  apiDomain: envs.root.apiDomain,
+  certificateArnParamName: appCfg.paramNames.certificateArn,
+  certificateArnParamNameAdmin: appCfg.paramNames.certificateArnAdmin,
+  subdomainHostedZoneIdParamName: appCfg.paramNames.subdomainHostedZoneId,
+  adminSubdomainHostedZoneIdParamName:
+    appCfg.paramNames.adminSubdomainHostedZoneId,
+  certificateArnParamNameApi: appCfg.paramNames.certificateArnApi,
+  apiSubdomainHostedZoneIdParamName: appCfg.paramNames.apiDomainHostedZoneId,
+  apiDomain: mgmtEnv.apiDomain,
 });
 
 new S3CloudfrontSiteStack(app, `FastPageWebPublicStack`, {
-  deployEnv: deployEnv,
+  deployEnv: targetEnv.name,
   env: env,
   description: "Web Public Stack",
   assetsDir: assetsDir,
-  certificateArnParamName: certificateArnParamName,
-  hzIdParamName: subdomainHostedZoneIdParamName,
+  certificateArnParamName: appCfg.paramNames.certificateArn,
+  hzIdParamName: appCfg.paramNames.subdomainHostedZoneId,
   deployEnvDomain: targetEnv.domain,
 });
 
 new S3CloudfrontSiteStack(app, `FastPageWebAdminStack`, {
-  deployEnv: deployEnv,
+  deployEnv: targetEnv.name,
   env: env,
   description: "Web Admin Stack",
   assetsDir: assetsDir,
-  certificateArnParamName: certificateArnParamNameAdmin,
-  hzIdParamName: adminSubdomainHostedZoneIdParamName,
+  certificateArnParamName: appCfg.paramNames.certificateArnAdmin,
+  hzIdParamName: appCfg.paramNames.adminSubdomainHostedZoneId,
   deployEnvDomain: targetEnv.adminDomain,
 });
 
@@ -84,22 +81,22 @@ const auth = new Auth(app, `FastPageAuthStack`, {
 
 new DataStack(app, `FastPageDataStack`, {
   env: env,
-  paramNameDDBTableName: paramNameDDBTableName,
-  paramNameDDBTableArn: paramNameDDBTableArn,
+  paramNameDDBTableName: appCfg.paramNames.ddbTableName,
+  paramNameDDBTableArn: appCfg.paramNames.ddbTableArn,
 });
 
 const serviceList = ["page-service", "customer-service"];
 
 new FunctionsStack(app, `FastPageFunctionsStack`, {
   env: env,
-  deployEnv: deployEnv,
-  paramNameDDBTableName: paramNameDDBTableName,
-  paramNameDDBTableArn: paramNameDDBTableArn,
+  deployEnv: targetEnv.name,
+  paramNameDDBTableName: appCfg.paramNames.ddbTableName,
+  paramNameDDBTableArn: appCfg.paramNames.ddbTableArn,
   serviceList: serviceList,
   userPool: auth.userPool,
   apiDomain: targetEnv.apiDomain,
-  certificateArnParamName: certificateArnParamNameApi,
-  hzIdParamName: apidomainHostedZoneIdParamName,
+  certificateArnParamName: appCfg.paramNames.certificateArnApi,
+  hzIdParamName: appCfg.paramNames.apiDomainHostedZoneId,
 });
 
 Tags.of(app).add("app", appName);

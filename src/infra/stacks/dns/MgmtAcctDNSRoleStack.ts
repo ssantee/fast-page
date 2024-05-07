@@ -7,12 +7,12 @@ import {
   Duration,
 } from "aws-cdk-lib";
 import { Construct } from "constructs";
-import { DomainEnv } from "../../../shared/types";
+import { EnvConfig } from "../../util/AppConfiguration";
 
 interface MgmtAcctDNSProps extends StackProps {
   iamPrincipalAccountNo: string;
-  mgmtEnv: DomainEnv;
-  targetEnv: DomainEnv;
+  mgmtEnv: EnvConfig;
+  targetEnv: EnvConfig;
   apiDomain: string;
 }
 

@@ -1,48 +1,28 @@
 import * as cdk from "aws-cdk-lib";
 import { Template } from "aws-cdk-lib/assertions";
-import { MgmtAcctDNSRoleStack } from "../../src/infra/stacks/dns/MgmtAcctDNSRoleStack";
 import { describe } from "node:test";
-import { DomainEnv } from "../../src/shared/types";
+import { AppConfiguration } from "../../src/infra/util/AppConfiguration";
+import * as appConfig from "../../config/config.json";
 import { SubDomain } from "../../src/infra/stacks/dns/SubDomain";
 
 describe("SubDomainStack test suite", () => {
   let SubDomainStackTemplate: Template;
-  const envs: { [env: string]: DomainEnv } = {
-    dev: {
-      account: "123456789012",
-      region: "us-east-1",
-      domain: "dev.pg.santee.cloud",
-      adminDomain: "dev.pgadmin.santee.cloud",
-      apiDomain: "dev.pgapi.santee.cloud",
-    },
-    prod: {
-      account: "123456789012",
-      region: "us-east-1",
-      domain: "prod.pg.santee.cloud",
-      adminDomain: "dev.pgadmin.santee.cloud",
-      apiDomain: "prod.pgapi.santee.cloud",
-    },
-    root: {
-      account: "123456789012",
-      region: "us-east-1",
-      domain: "pg.santee.cloud",
-      adminDomain: "pgadmin.santee.cloud",
-      apiDomain: "pgapi.santee.cloud",
-    },
-  };
+  const appCfg = new AppConfiguration(appConfig, "prod");
+  const targetEnv = appCfg.targetEnv;
+  const mgmtEnv = appCfg.mgmtEnv;
 
   beforeAll(() => {
     const app = new cdk.App();
     const subDomainStack = new SubDomain(app, "WebPublicStack", {
       env: {
-        account: envs.prod.account,
+        account: targetEnv.account,
         region: "us-east-1",
       },
       certificateArnParamName: "/account/fpCertificateArn",
       subdomainHostedZoneIdParamName: "/account/fpSubdomainHostedZoneId",
-      mgmtEnvAcctNo: envs.root.account,
-      deployEnvDomain: envs.prod.domain,
-      mgmtEnvDomain: envs.root.domain,
+      mgmtEnvAcctNo: mgmtEnv.account,
+      deployEnvDomain: targetEnv.domain,
+      mgmtEnvDomain: mgmtEnv.domain,
     });
     SubDomainStackTemplate = Template.fromStack(subDomainStack);
   });
@@ -51,8 +31,8 @@ describe("SubDomainStack test suite", () => {
     SubDomainStackTemplate.hasResourceProperties(
       "Custom::CrossAccountZoneDelegation",
       {
-        ParentZoneName: envs.root.domain,
-        DelegatedZoneName: envs.prod.domain,
+        ParentZoneName: mgmtEnv.domain,
+        DelegatedZoneName: targetEnv.domain,
         AssumeRoleArn: {
           "Fn::Join": [
             "",
@@ -61,7 +41,7 @@ describe("SubDomainStack test suite", () => {
               {
                 Ref: "AWS::Partition",
               },
-              `:iam::${envs.root.account}:role/MyXAcctDelegationRole`,
+              `:iam::${mgmtEnv.account}:role/MyXAcctDelegationRole`,
             ],
           ],
         },
@@ -71,7 +51,7 @@ describe("SubDomainStack test suite", () => {
 
   test("creates hosted zone", () => {
     SubDomainStackTemplate.hasResourceProperties("AWS::Route53::HostedZone", {
-      Name: `${envs.prod.domain}.`,
+      Name: `${targetEnv.domain}.`,
     });
   });
 

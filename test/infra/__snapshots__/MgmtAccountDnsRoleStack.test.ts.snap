@@ -24,7 +24,7 @@ exports[`Matches snapshot 1`] = `
     "ApiDomainNSRecord5AE8A5F1": {
       "Properties": {
         "HostedZoneId": "Z02022183L2XHLGIP6A83",
-        "Name": "pgapi.santee.cloud.",
+        "Name": "fpapi.santee.cloud.",
         "ResourceRecords": {
           "Fn::GetAtt": [
             "HostedZoneApiE1F610D8",
@@ -163,7 +163,7 @@ exports[`Matches snapshot 1`] = `
                       {
                         "Ref": "AWS::Partition",
                       },
-                      ":iam::123456789012:root",
+                      ":iam::339712782235:root",
                     ],
                   ],
                 },
@@ -196,6 +196,9 @@ exports[`Matches snapshot 1`] = `
                         "fpadmin.santee.cloud",
                         "dev.fpadmin.santee.cloud",
                         "prod.fpadmin.santee.cloud",
+                        "fpapi.santee.cloud",
+                        "prod.fpapi.santee.cloud",
+                        "dev.fpapi.santee.cloud",
                       ],
                     },
                   },
@@ -226,7 +229,7 @@ exports[`Matches snapshot 1`] = `
     "DomainNSRecordAdmin9B44FC4B": {
       "Properties": {
         "HostedZoneId": "Z02022183L2XHLGIP6A83",
-        "Name": "pgadmin.santee.cloud.",
+        "Name": "fpadmin.santee.cloud.",
         "ResourceRecords": {
           "Fn::GetAtt": [
             "HostedZoneAdminA7C7F609",
@@ -240,26 +243,26 @@ exports[`Matches snapshot 1`] = `
     },
     "HostedZoneAdminA7C7F609": {
       "Properties": {
-        "Name": "pgadmin.santee.cloud.",
+        "Name": "fpadmin.santee.cloud.",
       },
       "Type": "AWS::Route53::HostedZone",
     },
     "HostedZoneApiE1F610D8": {
       "Properties": {
-        "Name": "pgapi.santee.cloud.",
+        "Name": "fpapi.santee.cloud.",
       },
       "Type": "AWS::Route53::HostedZone",
     },
     "HostedZoneDB99F866": {
       "Properties": {
-        "Name": "pg.santee.cloud.",
+        "Name": "fp.santee.cloud.",
       },
       "Type": "AWS::Route53::HostedZone",
     },
     "SubDomainNSRecordBDFBB65E": {
       "Properties": {
         "HostedZoneId": "Z02022183L2XHLGIP6A83",
-        "Name": "pg.santee.cloud.",
+        "Name": "fp.santee.cloud.",
         "ResourceRecords": {
           "Fn::GetAtt": [
             "HostedZoneDB99F866",

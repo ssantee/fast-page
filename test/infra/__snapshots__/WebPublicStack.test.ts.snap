@@ -41,12 +41,12 @@ exports[`Matches snapshot 1`] = `
       "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
       "Type": "AWS::SSM::Parameter::Value<String>",
     },
-    "SsmParameterValueaccountfpCertificateArnC96584B6F00A464EAD1953AFF4B05118Parameter": {
-      "Default": "/account/fpCertificateArn",
+    "SsmParameterValuefpCertificateArnC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/fp/CertificateArn",
       "Type": "AWS::SSM::Parameter::Value<String>",
     },
-    "SsmParameterValueaccountfpSubdomainHostedZoneIdC96584B6F00A464EAD1953AFF4B05118Parameter": {
-      "Default": "/account/fpSubdomainHostedZoneId",
+    "SsmParameterValuefpsubdomainHostedZoneIdC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/fp/subdomainHostedZoneId",
       "Type": "AWS::SSM::Parameter::Value<String>",
     },
   },
@@ -71,9 +71,9 @@ exports[`Matches snapshot 1`] = `
           },
         },
         "HostedZoneId": {
-          "Ref": "SsmParameterValueaccountfpSubdomainHostedZoneIdC96584B6F00A464EAD1953AFF4B05118Parameter",
+          "Ref": "SsmParameterValuefpsubdomainHostedZoneIdC96584B6F00A464EAD1953AFF4B05118Parameter",
         },
-        "Name": "prod.pg.santee.cloud.",
+        "Name": "prod.fp.santee.cloud.",
         "Type": "AAAA",
       },
       "Type": "AWS::Route53::RecordSet",
@@ -302,7 +302,7 @@ exports[`Matches snapshot 1`] = `
       "Properties": {
         "DistributionConfig": {
           "Aliases": [
-            "prod.pg.santee.cloud",
+            "prod.fp.santee.cloud",
           ],
           "DefaultCacheBehavior": {
             "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
@@ -355,7 +355,7 @@ exports[`Matches snapshot 1`] = `
           ],
           "ViewerCertificate": {
             "AcmCertificateArn": {
-              "Ref": "SsmParameterValueaccountfpCertificateArnC96584B6F00A464EAD1953AFF4B05118Parameter",
+              "Ref": "SsmParameterValuefpCertificateArnC96584B6F00A464EAD1953AFF4B05118Parameter",
             },
             "MinimumProtocolVersion": "TLSv1.2_2021",
             "SslSupportMethod": "sni-only",

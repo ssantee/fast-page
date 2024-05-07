@@ -24,19 +24,19 @@ exports[`Matches snapshot 1`] = `
               {
                 "Ref": "AWS::Partition",
               },
-              ":iam::123456789012:role/MyXAcctDelegationRole",
+              ":iam::573259953910:role/MyXAcctDelegationRole",
             ],
           ],
         },
         "AssumeRoleRegion": "us-east-1",
-        "DelegatedZoneName": "prod.pg.santee.cloud",
+        "DelegatedZoneName": "prod.fp.santee.cloud",
         "DelegatedZoneNameServers": {
           "Fn::GetAtt": [
             "Route53FPSubZoneFFAE6E0D",
             "NameServers",
           ],
         },
-        "ParentZoneName": "pg.santee.cloud",
+        "ParentZoneName": "fp.santee.cloud",
         "ServiceToken": {
           "Fn::GetAtt": [
             "CustomCrossAccountZoneDelegationCustomResourceProviderHandler44A84265",
@@ -63,7 +63,7 @@ exports[`Matches snapshot 1`] = `
                     {
                       "Ref": "AWS::Partition",
                     },
-                    ":iam::123456789012:role/MyXAcctDelegationRole",
+                    ":iam::573259953910:role/MyXAcctDelegationRole",
                   ],
                 ],
               },
@@ -151,10 +151,10 @@ exports[`Matches snapshot 1`] = `
     },
     "DelegatedZoneCert71201BFD": {
       "Properties": {
-        "DomainName": "prod.pg.santee.cloud",
+        "DomainName": "prod.fp.santee.cloud",
         "DomainValidationOptions": [
           {
-            "DomainName": "prod.pg.santee.cloud",
+            "DomainName": "prod.fp.santee.cloud",
             "HostedZoneId": {
               "Ref": "Route53FPSubZoneFFAE6E0D",
             },
@@ -172,7 +172,7 @@ exports[`Matches snapshot 1`] = `
     },
     "Route53FPSubZoneFFAE6E0D": {
       "Properties": {
-        "Name": "prod.pg.santee.cloud.",
+        "Name": "prod.fp.santee.cloud.",
       },
       "Type": "AWS::Route53::HostedZone",
     },

@@ -2,48 +2,29 @@ import * as cdk from "aws-cdk-lib";
 import { Template } from "aws-cdk-lib/assertions";
 import { S3CloudfrontSiteStack } from "../../src/infra/stacks/s3-cloudfront-site/S3CloudfrontSiteStack";
 import { describe } from "node:test";
-import { DomainEnv } from "../../src/shared/types";
+import { AppConfiguration } from "../../src/infra/util/AppConfiguration";
+import * as appConfig from "../../config/config.json";
 
 describe("S3CloudfrontSiteStack stack test suite", () => {
   let webPublicTemplate: Template;
 
   beforeAll(() => {
-    const envs: { [env: string]: DomainEnv } = {
-      dev: {
-        account: "123456789012",
-        region: "us-east-1",
-        domain: "dev.pg.santee.cloud",
-        adminDomain: "dev.pgadmin.santee.cloud",
-        apiDomain: "dev.pgapi.santee.cloud",
-      },
-      prod: {
-        account: "123456789012",
-        region: "us-east-1",
-        domain: "prod.pg.santee.cloud",
-        adminDomain: "prod.pgadmin.santee.cloud",
-        apiDomain: "prod.pgapi.santee.cloud",
-      },
-      root: {
-        account: "123456789012",
-        region: "us-east-1",
-        domain: "pg.santee.cloud",
-        adminDomain: "pgadmin.santee.cloud",
-        apiDomain: "pgapi.santee.cloud",
-      },
-    };
+    const appCfg = new AppConfiguration(appConfig, "prod");
+    const targetEnv = appCfg.targetEnv;
+    const paramNames = appCfg.paramNames;
 
     const app = new cdk.App();
     const webPublicStack = new S3CloudfrontSiteStack(app, "WebPublicStack", {
       deployEnv: "prod",
       env: {
-        account: "123456789012",
-        region: "us-east-1",
+        account: targetEnv.account,
+        region: targetEnv.region,
       },
       description: "Web Public Stack",
       assetsDir: `${process.cwd()}/assets`,
-      certificateArnParamName: "/account/fpCertificateArn",
-      hzIdParamName: "/account/fpSubdomainHostedZoneId",
-      deployEnvDomain: envs.prod.domain,
+      certificateArnParamName: paramNames.certificateArn,
+      hzIdParamName: paramNames.subdomainHostedZoneId,
+      deployEnvDomain: targetEnv.domain,
     });
     webPublicTemplate = Template.fromStack(webPublicStack);
   });
