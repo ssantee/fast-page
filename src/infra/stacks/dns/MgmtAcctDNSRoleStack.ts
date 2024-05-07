@@ -13,6 +13,7 @@ interface MgmtAcctDNSProps extends StackProps {
   iamPrincipalAccountNo: string;
   mgmtEnv: DomainEnv;
   targetEnv: DomainEnv;
+  apiDomain: string;
 }
 
 export class MgmtAcctDNSRoleStack extends Stack {
@@ -25,6 +26,10 @@ export class MgmtAcctDNSRoleStack extends Stack {
 
     const newAdminZone = new route53.PublicHostedZone(this, "HostedZoneAdmin", {
       zoneName: props.mgmtEnv.adminDomain,
+    });
+
+    const newApiZone = new route53.PublicHostedZone(this, "HostedZoneApi", {
+      zoneName: props.apiDomain,
     });
 
     const crossAccountRole = new iam.Role(this, "CrossAccountRole", {
@@ -65,6 +70,9 @@ export class MgmtAcctDNSRoleStack extends Stack {
                     "fpadmin.santee.cloud",
                     "dev.fpadmin.santee.cloud",
                     "prod.fpadmin.santee.cloud",
+                    "fpapi.santee.cloud",
+                    "prod.fpapi.santee.cloud",
+                    "dev.fpapi.santee.cloud",
                   ],
                 },
               },
@@ -75,6 +83,7 @@ export class MgmtAcctDNSRoleStack extends Stack {
     });
     newZone.grantDelegation(crossAccountRole);
     newAdminZone.grantDelegation(crossAccountRole);
+    newApiZone.grantDelegation(crossAccountRole);
 
     const tldZone = route53.PublicHostedZone.fromPublicHostedZoneAttributes(
       this,
@@ -96,6 +105,13 @@ export class MgmtAcctDNSRoleStack extends Stack {
       zone: tldZone,
       recordName: props.mgmtEnv.adminDomain,
       values: newAdminZone.hostedZoneNameServers || [],
+      ttl: Duration.seconds(172800),
+    });
+
+    new route53.NsRecord(this, "ApiDomainNSRecord", {
+      zone: tldZone,
+      recordName: props.apiDomain,
+      values: newApiZone.hostedZoneNameServers || [],
       ttl: Duration.seconds(172800),
     });
 

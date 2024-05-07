@@ -28,7 +28,11 @@
     "typescript-eslint": "^7.7.0"
   },
   "dependencies": {
+    "@aws-amplify/auth": "^5.6.12",
+    "@aws-sdk/client-cognito-identity": "^3.569.0",
+    "@aws-sdk/credential-providers": "^3.569.0",
     "@aws-solutions-constructs/aws-cloudfront-s3": "^2.55.0",
+    "aws-amplify": "^5.3.18",
     "aws-cdk-lib": "^2.137.0",
     "constructs": "^10.3.0",
     "source-map-support": "^0.5.21"

@@ -11,4 +11,7 @@ export interface AppDNSStageProps extends StageProps {
   certificateArnParamNameAdmin: string;
   subdomainHostedZoneIdParamName: string;
   adminSubdomainHostedZoneIdParamName: string;
+  certificateArnParamNameApi: string;
+  apiSubdomainHostedZoneIdParamName: string;
+  apiDomain: string;
 }

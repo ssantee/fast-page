@@ -4,16 +4,12 @@ import {
   aws_ssm as ssm,
   Stack,
   StackProps,
-  SecretValue,
-  RemovalPolicy,
 } from "aws-cdk-lib";
 import { Construct } from "constructs";
-import { DomainEnv } from "../../../shared/types";
 import {
   Certificate,
   CertificateValidation,
 } from "aws-cdk-lib/aws-certificatemanager";
-import { Secret } from "aws-cdk-lib/aws-secretsmanager";
 
 interface SubDomainProps extends StackProps {
   mgmtEnvAcctNo: string;

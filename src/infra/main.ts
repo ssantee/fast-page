@@ -4,6 +4,9 @@ import { DomainEnv } from "../shared/types";
 import { S3CloudfrontSiteStack } from "./stacks/s3-cloudfront-site/S3CloudfrontSiteStack";
 import { DNSStage } from "./stages/DNSStage";
 import { MgmtAcctDNSRoleStack } from "./stacks/dns/MgmtAcctDNSRoleStack";
+import DataStack from "./stacks/data/DataStack";
+import FunctionsStack from "./stacks/functions/FunctionsStack";
+import { Auth } from "./stacks/auth/Auth";
 
 const appName = "fast-page";
 const assetsDir = `${process.cwd()}/assets`;
@@ -21,8 +24,14 @@ const env = { account: targetEnv?.account, region: targetEnv?.region };
 
 const certificateArnParamName = "/fp/CertificateArn";
 const certificateArnParamNameAdmin = "/fp/adminCertificateArn";
+const certificateArnParamNameApi = "/fp/CertificateArnApi";
+
 const subdomainHostedZoneIdParamName = "/fp/subdomainHostedZoneId";
 const adminSubdomainHostedZoneIdParamName = "/fp/adminSubdomainHostedZoneId";
+const apidomainHostedZoneIdParamName = "/fp/apidomainHostedZoneId";
+
+const paramNameDDBTableName = "/fp/ddbTable";
+const paramNameDDBTableArn = "/fp/ddbTableArn";
 
 new MgmtAcctDNSRoleStack(app, `FastPageMgmtAcctDNSRoleStack`, {
   env: { account: envs.root.account, region: envs.root.region },
@@ -30,6 +39,7 @@ new MgmtAcctDNSRoleStack(app, `FastPageMgmtAcctDNSRoleStack`, {
   mgmtEnv: envs.root,
   targetEnv: targetEnv,
   iamPrincipalAccountNo: envs.root.account,
+  apiDomain: envs.root.apiDomain,
 });
 
 new DNSStage(app, `FastPageDNSStage`, {
@@ -42,6 +52,9 @@ new DNSStage(app, `FastPageDNSStage`, {
   certificateArnParamNameAdmin: certificateArnParamNameAdmin,
   subdomainHostedZoneIdParamName: subdomainHostedZoneIdParamName,
   adminSubdomainHostedZoneIdParamName: adminSubdomainHostedZoneIdParamName,
+  certificateArnParamNameApi: certificateArnParamNameApi,
+  apiSubdomainHostedZoneIdParamName: apidomainHostedZoneIdParamName,
+  apiDomain: envs.root.apiDomain,
 });
 
 new S3CloudfrontSiteStack(app, `FastPageWebPublicStack`, {
@@ -62,6 +75,31 @@ new S3CloudfrontSiteStack(app, `FastPageWebAdminStack`, {
   certificateArnParamName: certificateArnParamNameAdmin,
   hzIdParamName: adminSubdomainHostedZoneIdParamName,
   deployEnvDomain: targetEnv.adminDomain,
+});
+
+const auth = new Auth(app, `FastPageAuthStack`, {
+  env: env,
+  adminGroupName: "FastPageAdmins",
+});
+
+new DataStack(app, `FastPageDataStack`, {
+  env: env,
+  paramNameDDBTableName: paramNameDDBTableName,
+  paramNameDDBTableArn: paramNameDDBTableArn,
+});
+
+const serviceList = ["page-service", "customer-service"];
+
+new FunctionsStack(app, `FastPageFunctionsStack`, {
+  env: env,
+  deployEnv: deployEnv,
+  paramNameDDBTableName: paramNameDDBTableName,
+  paramNameDDBTableArn: paramNameDDBTableArn,
+  serviceList: serviceList,
+  userPool: auth.userPool,
+  apiDomain: targetEnv.apiDomain,
+  certificateArnParamName: certificateArnParamNameApi,
+  hzIdParamName: apidomainHostedZoneIdParamName,
 });
 
 Tags.of(app).add("app", appName);

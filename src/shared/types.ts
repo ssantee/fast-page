@@ -3,4 +3,5 @@ export type DomainEnv = {
   account: string;
   region: string;
   adminDomain: string;
+  apiDomain: string;
 };

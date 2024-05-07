@@ -12,12 +12,10 @@ import {
   PolicyStatement,
   Role,
 } from "aws-cdk-lib/aws-iam";
-import { IBucket } from "aws-cdk-lib/aws-s3";
 import { Construct } from "constructs";
 import { constructIds } from "./constructIds";
 
 interface AuthProps extends StackProps {
-  bucket: IBucket;
   adminGroupName: string;
 }
 
@@ -68,7 +66,7 @@ export class Auth extends Stack {
       value: this.identityPool.ref,
     });
 
-    this.createRoles(props.bucket);
+    this.createRoles();
 
     new CfnIdentityPoolRoleAttachment(this, constructIds.IdpRoleAttachment, {
       identityPoolId: this.identityPool.ref,
@@ -92,7 +90,7 @@ export class Auth extends Stack {
     });
   }
 
-  private createRoles(bucket: IBucket) {
+  private createRoles() {
     const cognitoFederatedPrincipal = "cognito-identity.amazonaws.com";
 
     this.authenticatedRole = new Role(
@@ -145,26 +143,5 @@ export class Auth extends Stack {
         "sts:AssumeRoleWithWebIdentity",
       ),
     });
-    this.adminRole.addToPolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ["s3:PutObject", "s3:PutObjectAcl"],
-        resources: [bucket.bucketArn + "/*"],
-      }),
-    );
-    this.adminRole.addToPolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ["s3:ListBucket"],
-        resources: [bucket.bucketArn],
-      }),
-    );
-    this.adminRole.addToPolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ["s3:ListAllMyBuckets"],
-        resources: ["*"],
-      }),
-    );
   }
 }

@@ -28,5 +28,16 @@ export class DNSStage extends Stage {
       deployEnvDomain: props.targetEnv.adminDomain,
       mgmtEnvDomain: props.mgmtEnv.adminDomain,
     });
+
+    new SubDomain(scope, `FastPageApiSubDomainStack`, {
+      env: props.env,
+      mgmtEnvAcctNo: props.mgmtEnv.account,
+      description:
+        "Hosted zones for Fast Page subdomains with cross-account delegation.",
+      certificateArnParamName: props.certificateArnParamNameApi,
+      subdomainHostedZoneIdParamName: props.apiSubdomainHostedZoneIdParamName,
+      deployEnvDomain: props.targetEnv.apiDomain,
+      mgmtEnvDomain: props.mgmtEnv.apiDomain,
+    });
   }
 }

@@ -68,18 +68,21 @@
       "root": {
         "domain": "fp.santee.cloud",
         "adminDomain": "fpadmin.santee.cloud",
+        "apiDomain": "fpapi.santee.cloud",
         "account": "573259953910",
         "region": "us-east-1"
       },
       "dev": {
         "domain": "dev.fp.santee.cloud",
         "adminDomain": "dev.fpadmin.santee.cloud",
+        "apiDomain": "dev.fpapi.santee.cloud",
         "account": "590184120807",
         "region": "us-east-1"
       },
       "prod": {
         "domain": "prod.fp.santee.cloud",
         "adminDomain": "prod.fpadmin.santee.cloud",
+        "apiDomain": "prod.fpapi.santee.cloud",
         "account": "339712782235",
         "region": "us-east-1"
       }

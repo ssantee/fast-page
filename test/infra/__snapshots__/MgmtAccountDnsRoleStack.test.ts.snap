@@ -21,6 +21,21 @@ exports[`Matches snapshot 1`] = `
     },
   },
   "Resources": {
+    "ApiDomainNSRecord5AE8A5F1": {
+      "Properties": {
+        "HostedZoneId": "Z02022183L2XHLGIP6A83",
+        "Name": "pgapi.santee.cloud.",
+        "ResourceRecords": {
+          "Fn::GetAtt": [
+            "HostedZoneApiE1F610D8",
+            "NameServers",
+          ],
+        },
+        "TTL": "172800",
+        "Type": "NS",
+      },
+      "Type": "AWS::Route53::RecordSet",
+    },
     "CrossAccountRoleDefaultPolicy212A317F": {
       "Properties": {
         "PolicyDocument": {
@@ -85,6 +100,36 @@ exports[`Matches snapshot 1`] = `
                     ":route53:::hostedzone/",
                     {
                       "Ref": "HostedZoneAdminA7C7F609",
+                    },
+                  ],
+                ],
+              },
+            },
+            {
+              "Action": "route53:ChangeResourceRecordSets",
+              "Condition": {
+                "ForAllValues:StringEquals": {
+                  "route53:ChangeResourceRecordSetsActions": [
+                    "UPSERT",
+                    "DELETE",
+                  ],
+                  "route53:ChangeResourceRecordSetsRecordTypes": [
+                    "NS",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":route53:::hostedzone/",
+                    {
+                      "Ref": "HostedZoneApiE1F610D8",
                     },
                   ],
                 ],
@@ -181,7 +226,7 @@ exports[`Matches snapshot 1`] = `
     "DomainNSRecordAdmin9B44FC4B": {
       "Properties": {
         "HostedZoneId": "Z02022183L2XHLGIP6A83",
-        "Name": "dev.pgadmin.santee.cloud.",
+        "Name": "pgadmin.santee.cloud.",
         "ResourceRecords": {
           "Fn::GetAtt": [
             "HostedZoneAdminA7C7F609",
@@ -195,7 +240,13 @@ exports[`Matches snapshot 1`] = `
     },
     "HostedZoneAdminA7C7F609": {
       "Properties": {
-        "Name": "dev.pgadmin.santee.cloud.",
+        "Name": "pgadmin.santee.cloud.",
+      },
+      "Type": "AWS::Route53::HostedZone",
+    },
+    "HostedZoneApiE1F610D8": {
+      "Properties": {
+        "Name": "pgapi.santee.cloud.",
       },
       "Type": "AWS::Route53::HostedZone",
     },

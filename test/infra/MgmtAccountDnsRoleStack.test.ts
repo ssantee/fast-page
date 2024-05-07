@@ -12,18 +12,21 @@ describe("MgmtAcctDNSRoleStack test suite", () => {
       region: "us-east-1",
       domain: "dev.pg.santee.cloud",
       adminDomain: "dev.pgadmin.santee.cloud",
+      apiDomain: "dev.pgapi.santee.cloud",
     },
     prod: {
       account: "123456789012",
       region: "us-east-1",
       domain: "prod.pg.santee.cloud",
-      adminDomain: "dev.pgadmin.santee.cloud",
+      adminDomain: "prod.pgadmin.santee.cloud",
+      apiDomain: "prod.pgapi.santee.cloud",
     },
     root: {
       account: "123456789012",
       region: "us-east-1",
       domain: "pg.santee.cloud",
-      adminDomain: "dev.pgadmin.santee.cloud",
+      adminDomain: "pgadmin.santee.cloud",
+      apiDomain: "pgapi.santee.cloud",
     },
   };
 
@@ -40,6 +43,7 @@ describe("MgmtAcctDNSRoleStack test suite", () => {
         mgmtEnv: envs.root,
         targetEnv: envs.prod,
         iamPrincipalAccountNo: envs.prod.account,
+        apiDomain: envs.root.apiDomain,
       },
     );
     MgmtAcctDNSRoleStackTemplate = Template.fromStack(mgmtAcctDNSRoleStack);
