@@ -1,8 +1,28 @@
 # fast-page
 
-Repository to house infrastructure and application code for the fast-page project.
-
 ## Overview
+
+Repository to house infrastructure and application code for the fast-page project. 
+
+The project will create infrastructure for a serverless website, including:
+- Admin and public-facing S3 sites
+- Authentication infra
+- Serverless services
+- DynamoDB tables
+- Multiple environments (dev, prod)
+- DNS configurations for all of the above
+
+## Configuration
+Examine the directory `/config` for the example configuration file. This file should be customized and renamed to `config.json` before attempting to `cdk synth` or `cdk deploy`.
+
+### Environment Variables
+When calling CDK CLI operations, the `DEPLOY_ENV` environment variable should be set to the desired environment. This variable is used to help determine configuration of cross-account DNS and other resources.
+
+Note that the AWS CLI profile should still be set for `cdk synth` or `cdk deploy` operations.
+
+```
+export DEPLOY_ENV=dev; cdk synth --profile dev;
+```
 
 ## DNS
 Hosted zone for primary domain lives in the management account. 
