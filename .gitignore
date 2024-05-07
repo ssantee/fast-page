@@ -13,3 +13,4 @@ cdk.out
 # with high risk of secrets exposure.
 test/auth.test.ts
 test/AuthService.ts
+config/config.json
