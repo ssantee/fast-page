@@ -30,6 +30,7 @@ export class AppConfiguration {
   public paramNames: ParamConfig;
 
   constructor(configData: AppConfig, deployEnv: string) {
+    // this helps us to determine the target env among the configured envs.
     this.deployEnv = deployEnv;
     this.targetEnv = this.getTargetEnv(configData.environments);
     this.mgmtEnv = this.getMgmtEnv(configData.environments, "root");
