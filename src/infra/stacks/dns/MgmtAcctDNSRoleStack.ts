@@ -83,8 +83,13 @@ export class MgmtAcctDNSRoleStack extends Stack {
       },
     });
 
-    crossAccountRole.grantAssumeRole(
-      new iam.AccountPrincipal(props.prodEnv.account),
+    crossAccountRole.assumeRolePolicy?.addStatements(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ["sts:AssumeRole"],
+        resources: [crossAccountRole.roleArn],
+        principals: [new iam.AccountPrincipal(props.prodEnv.account)],
+      }),
     );
 
     newZone.grantDelegation(crossAccountRole);
