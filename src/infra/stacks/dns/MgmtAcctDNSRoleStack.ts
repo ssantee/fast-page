@@ -12,8 +12,9 @@ import { EnvConfig } from "../../util/AppConfiguration";
 interface MgmtAcctDNSProps extends StackProps {
   iamPrincipalAccountNo: string;
   mgmtEnv: EnvConfig;
-  targetEnv: EnvConfig;
   apiDomain: string;
+  devEnv: EnvConfig;
+  prodEnv: EnvConfig;
 }
 
 export class MgmtAcctDNSRoleStack extends Stack {
@@ -36,7 +37,7 @@ export class MgmtAcctDNSRoleStack extends Stack {
       // The role name must be predictable
       roleName: "MyXAcctDelegationRole",
       // The other account
-      assumedBy: new iam.AccountPrincipal(props.targetEnv.account),
+      assumedBy: new iam.AccountPrincipal(props.devEnv.account),
       // You can scope down this role policy to be least privileged.
       // If you want the other account to be able to manage specific records,
       // you can scope down by resource and/or normalized record names
@@ -81,6 +82,11 @@ export class MgmtAcctDNSRoleStack extends Stack {
         }),
       },
     });
+
+    crossAccountRole.grantAssumeRole(
+      new iam.AccountPrincipal(props.prodEnv.account),
+    );
+
     newZone.grantDelegation(crossAccountRole);
     newAdminZone.grantDelegation(crossAccountRole);
     newApiZone.grantDelegation(crossAccountRole);

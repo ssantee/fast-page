@@ -15,22 +15,14 @@ const mgmtEnv = appCfg.mgmtEnv;
 
 const app = new App();
 
-const mgmtDev = new MgmtAccountStage(app, `FastPageMgmtAcctStageDev`, {
+const mgmtStage = new MgmtAccountStage(app, `FastPageMgmtAcctStage`, {
   env: { account: mgmtEnv.account, region: mgmtEnv.region },
   mgmtEnv: mgmtEnv,
-  targetEnv: appCfg.devEnv,
+  devEnv: appCfg.devEnv,
+  prodEnv: appCfg.prodEnv,
   iamPrincipalAccountNo: mgmtEnv.account,
   apiDomain: mgmtEnv.apiDomain,
   stackName: `FastPageMgmtAcctDNSRoleStackDev`,
-});
-
-const mgmtProd = new MgmtAccountStage(app, `FastPageMgmtAcctStageProd`, {
-  env: { account: mgmtEnv.account, region: mgmtEnv.region },
-  mgmtEnv: mgmtEnv,
-  targetEnv: appCfg.prodEnv,
-  iamPrincipalAccountNo: mgmtEnv.account,
-  apiDomain: mgmtEnv.apiDomain,
-  stackName: `FastPageMgmtAcctDNSRoleStackProd`,
 });
 
 const devStage = new DevStage(app, `FastPageDevStage`, {
@@ -69,8 +61,7 @@ const cicdStack = new CICDStack(app, `FastPageCICDStack`, {
   env: { account: mgmtEnv.account, region: mgmtEnv.region },
 });
 
-cicdStack.pipeline.addStage(mgmtDev);
-cicdStack.pipeline.addStage(mgmtProd);
+cicdStack.pipeline.addStage(mgmtStage);
 cicdStack.pipeline.addStage(devStage);
 cicdStack.pipeline.addStage(prodStage);
 

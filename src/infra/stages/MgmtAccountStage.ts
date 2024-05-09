@@ -5,10 +5,11 @@ import { MgmtAcctDNSRoleStack } from "../stacks/dns/MgmtAcctDNSRoleStack";
 
 export interface MgmtAccountStageProps extends StageProps {
   mgmtEnv: EnvConfig;
-  targetEnv: EnvConfig;
   apiDomain: string;
   iamPrincipalAccountNo: string;
   stackName: string;
+  devEnv: EnvConfig;
+  prodEnv: EnvConfig;
 }
 
 export class MgmtAccountStage extends Stage {
@@ -19,9 +20,10 @@ export class MgmtAccountStage extends Stage {
       env: { account: props.mgmtEnv.account, region: props.mgmtEnv.region },
       description: "Cross-account delegation role for Fast Page subdomains.",
       mgmtEnv: props.mgmtEnv,
-      targetEnv: props.targetEnv,
       iamPrincipalAccountNo: props.mgmtEnv.account,
       apiDomain: props.mgmtEnv.apiDomain,
+      devEnv: props.devEnv,
+      prodEnv: props.prodEnv,
     });
   }
 }
