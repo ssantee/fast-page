@@ -1,7 +1,13 @@
-import { pipelines, Stack, StackProps } from "aws-cdk-lib";
+import {
+  pipelines,
+  Stack,
+  StackProps,
+  aws_codebuild as codebuild,
+} from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { Repository } from "aws-cdk-lib/aws-codecommit";
 import { Effect, PolicyStatement } from "aws-cdk-lib/aws-iam";
+import { LinuxArmLambdaBuildImage } from "aws-cdk-lib/aws-codebuild";
 
 interface CICDStackProps extends StackProps {}
 
@@ -21,6 +27,9 @@ export class CICDStack extends Stack {
       synth: new pipelines.CodeBuildStep("Synth", {
         input: pipelines.CodePipelineSource.codeCommit(repo, "add-pipeline-v2"),
         primaryOutputDirectory: "cdk.out",
+        buildEnvironment: {
+          buildImage: codebuild.LinuxArmBuildImage.AMAZON_LINUX_2_STANDARD_3_0,
+        },
         commands: [
           "aws s3 cp s3://ss-config-store/config.json ./config",
           "npm ci",
