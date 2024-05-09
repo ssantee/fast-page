@@ -14,6 +14,7 @@ import {
 } from "aws-cdk-lib/aws-iam";
 import * as path from "node:path";
 import { UserPool } from "aws-cdk-lib/aws-cognito";
+import { Platform } from "aws-cdk-lib/aws-ecr-assets";
 
 interface ServerlessServiceGoProps extends StackProps {
   deployEnv: string;
@@ -68,7 +69,9 @@ export default class ServerlessServiceGo extends Construct {
 
     const codeAsset = DockerImageCode.fromImageAsset(
       path.join(__dirname, "..", "..", "services", props.serviceName),
-      {},
+      {
+        platform: Platform.LINUX_ARM64,
+      },
     );
 
     this.lambdaFunction = new DockerImageFunction(this, "Function", {
