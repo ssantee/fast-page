@@ -23,6 +23,11 @@ export class CICDStack extends Stack {
 
     this.pipeline = new pipelines.CodePipeline(this, "Pipeline", {
       crossAccountKeys: true,
+      codeBuildDefaults: {
+        buildEnvironment: {
+          buildImage: codebuild.LinuxArmBuildImage.AMAZON_LINUX_2_STANDARD_3_0,
+        },
+      },
       synth: new pipelines.CodeBuildStep("Synth", {
         input: pipelines.CodePipelineSource.codeCommit(repo, "add-pipeline-v2"),
         primaryOutputDirectory: "cdk.out",
