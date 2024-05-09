@@ -85,9 +85,7 @@ export class MgmtAcctDNSRoleStack extends Stack {
 
     crossAccountRole.assumeRolePolicy?.addStatements(
       new iam.PolicyStatement({
-        effect: iam.Effect.ALLOW,
         actions: ["sts:AssumeRole"],
-        resources: [crossAccountRole.roleArn],
         principals: [new iam.AccountPrincipal(props.prodEnv.account)],
       }),
     );
