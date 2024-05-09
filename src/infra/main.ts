@@ -2,12 +2,9 @@ import { App, Aspects, Tags } from "aws-cdk-lib";
 import { TagChecker } from "./aspects/TagChecker";
 import { AppConfiguration } from "./util/AppConfiguration";
 import * as appConfig from "../../config/config.json";
-import { S3CloudfrontSiteStack } from "./stacks/s3-cloudfront-site/S3CloudfrontSiteStack";
-import { DNSStage } from "./stages/DNSStage";
-import { MgmtAcctDNSRoleStack } from "./stacks/dns/MgmtAcctDNSRoleStack";
-import DataStack from "./stacks/data/DataStack";
-import FunctionsStack from "./stacks/functions/FunctionsStack";
-import { Auth } from "./stacks/auth/Auth";
+import { MgmtAccountStage } from "./stages/MgmtAccountStage";
+import { DevStage } from "./stages/DevStage";
+import { ProdStage } from "./stages/ProdStage";
 
 const appName = "fast-page";
 const assetsDir = `${process.cwd()}/assets`;
@@ -30,17 +27,18 @@ const mgmtEnv = appCfg.mgmtEnv;
 
 const app = new App();
 
-new MgmtAcctDNSRoleStack(app, `FastPageMgmtAcctDNSRoleStack`, {
+new MgmtAccountStage(app, `FastPageMgmtAcctStage`, {
   env: { account: mgmtEnv.account, region: mgmtEnv.region },
-  description: "Cross-account delegation role for Fast Page subdomains.",
   mgmtEnv: mgmtEnv,
   targetEnv: targetEnv,
   iamPrincipalAccountNo: mgmtEnv.account,
   apiDomain: mgmtEnv.apiDomain,
 });
 
-new DNSStage(app, `FastPageDNSStage`, {
+/* start stuff that needs to be wrapped in env-specific stages */
+new DevStage(app, `FastPageDevStage`, {
   env: env,
+  appCfg: appCfg,
   assetsDir: assetsDir,
   mgmtEnv: mgmtEnv,
   targetEnv: targetEnv,
@@ -54,49 +52,20 @@ new DNSStage(app, `FastPageDNSStage`, {
   apiDomain: mgmtEnv.apiDomain,
 });
 
-new S3CloudfrontSiteStack(app, `FastPageWebPublicStack`, {
-  deployEnv: targetEnv.name,
+new ProdStage(app, `FastPageProdStage`, {
   env: env,
-  description: "Web Public Stack",
+  appCfg: appCfg,
   assetsDir: assetsDir,
+  mgmtEnv: mgmtEnv,
+  targetEnv: targetEnv,
   certificateArnParamName: appCfg.paramNames.certificateArn,
-  hzIdParamName: appCfg.paramNames.subdomainHostedZoneId,
-  deployEnvDomain: targetEnv.domain,
-});
-
-new S3CloudfrontSiteStack(app, `FastPageWebAdminStack`, {
-  deployEnv: targetEnv.name,
-  env: env,
-  description: "Web Admin Stack",
-  assetsDir: assetsDir,
-  certificateArnParamName: appCfg.paramNames.certificateArnAdmin,
-  hzIdParamName: appCfg.paramNames.adminSubdomainHostedZoneId,
-  deployEnvDomain: targetEnv.adminDomain,
-});
-
-const auth = new Auth(app, `FastPageAuthStack`, {
-  env: env,
-  adminGroupName: "FastPageAdmins",
-});
-
-new DataStack(app, `FastPageDataStack`, {
-  env: env,
-  paramNameDDBTableName: appCfg.paramNames.ddbTableName,
-  paramNameDDBTableArn: appCfg.paramNames.ddbTableArn,
-});
-
-const serviceList = ["page-service", "customer-service"];
-
-new FunctionsStack(app, `FastPageFunctionsStack`, {
-  env: env,
-  deployEnv: targetEnv.name,
-  paramNameDDBTableName: appCfg.paramNames.ddbTableName,
-  paramNameDDBTableArn: appCfg.paramNames.ddbTableArn,
-  serviceList: serviceList,
-  userPool: auth.userPool,
-  apiDomain: targetEnv.apiDomain,
-  certificateArnParamName: appCfg.paramNames.certificateArnApi,
-  hzIdParamName: appCfg.paramNames.apiDomainHostedZoneId,
+  certificateArnParamNameAdmin: appCfg.paramNames.certificateArnAdmin,
+  subdomainHostedZoneIdParamName: appCfg.paramNames.subdomainHostedZoneId,
+  adminSubdomainHostedZoneIdParamName:
+    appCfg.paramNames.adminSubdomainHostedZoneId,
+  certificateArnParamNameApi: appCfg.paramNames.certificateArnApi,
+  apiSubdomainHostedZoneIdParamName: appCfg.paramNames.apiDomainHostedZoneId,
+  apiDomain: mgmtEnv.apiDomain,
 });
 
 Tags.of(app).add("app", appName);
