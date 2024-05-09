@@ -6,6 +6,7 @@ import { Auth } from "../stacks/auth/Auth";
 import DataStack from "../stacks/data/DataStack";
 import FunctionsStack from "../stacks/functions/FunctionsStack";
 import { SubDomain } from "../stacks/dns/SubDomain";
+import { IamStack } from "../stacks/iam/IamStack";
 
 export interface DevStageProps extends StageProps {
   assetsDir: string;
@@ -24,6 +25,11 @@ export interface DevStageProps extends StageProps {
 export class DevStage extends Stage {
   constructor(scope: Construct, id: string, props: DevStageProps) {
     super(scope, id, props);
+
+    new IamStack(this, `FastPageIamStack`, {
+      env: props.env,
+      mgmtAccount: props.mgmtEnv.account,
+    });
 
     new SubDomain(this, `FastPageSubDomainStack`, {
       env: props.env,
