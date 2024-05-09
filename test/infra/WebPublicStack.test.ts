@@ -9,8 +9,8 @@ describe("S3CloudfrontSiteStack stack test suite", () => {
   let webPublicTemplate: Template;
 
   beforeAll(() => {
-    const appCfg = new AppConfiguration(appConfig, "prod");
-    const targetEnv = appCfg.targetEnv;
+    const appCfg = new AppConfiguration(appConfig);
+    const targetEnv = appCfg.prodEnv;
     const paramNames = appCfg.paramNames;
 
     const app = new cdk.App();

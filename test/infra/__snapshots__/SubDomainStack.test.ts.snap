@@ -29,7 +29,7 @@ exports[`Matches snapshot 1`] = `
           ],
         },
         "AssumeRoleRegion": "us-east-1",
-        "DelegatedZoneName": "prod.fp.santee.cloud",
+        "DelegatedZoneName": "dev.fp.santee.cloud",
         "DelegatedZoneNameServers": {
           "Fn::GetAtt": [
             "Route53FPSubZoneFFAE6E0D",
@@ -151,10 +151,10 @@ exports[`Matches snapshot 1`] = `
     },
     "DelegatedZoneCert71201BFD": {
       "Properties": {
-        "DomainName": "prod.fp.santee.cloud",
+        "DomainName": "dev.fp.santee.cloud",
         "DomainValidationOptions": [
           {
-            "DomainName": "prod.fp.santee.cloud",
+            "DomainName": "dev.fp.santee.cloud",
             "HostedZoneId": {
               "Ref": "Route53FPSubZoneFFAE6E0D",
             },
@@ -172,7 +172,7 @@ exports[`Matches snapshot 1`] = `
     },
     "Route53FPSubZoneFFAE6E0D": {
       "Properties": {
-        "Name": "prod.fp.santee.cloud.",
+        "Name": "dev.fp.santee.cloud.",
       },
       "Type": "AWS::Route53::HostedZone",
     },

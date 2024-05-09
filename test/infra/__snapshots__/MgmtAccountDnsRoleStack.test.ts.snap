@@ -163,7 +163,7 @@ exports[`Matches snapshot 1`] = `
                       {
                         "Ref": "AWS::Partition",
                       },
-                      ":iam::339712782235:root",
+                      ":iam::590184120807:root",
                     ],
                   ],
                 },

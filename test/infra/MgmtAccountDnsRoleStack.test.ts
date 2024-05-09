@@ -7,8 +7,8 @@ import * as appConfig from "../../config/config.json";
 
 describe("MgmtAcctDNSRoleStack test suite", () => {
   let MgmtAcctDNSRoleStackTemplate: Template;
-  const appCfg = new AppConfiguration(appConfig, "prod");
-  const targetEnv = appCfg.targetEnv;
+  const appCfg = new AppConfiguration(appConfig);
+  const targetEnv = appCfg.devEnv;
   const mgmtEnv = appCfg.mgmtEnv;
 
   beforeAll(() => {

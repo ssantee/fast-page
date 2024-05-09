@@ -8,8 +8,8 @@ import DataStack from "../../src/infra/stacks/data/DataStack";
 describe("DataStack test suite", () => {
   let DataStackTemplate: Template;
 
-  const appCfg = new AppConfiguration(appConfig, "prod");
-  const targetEnv = appCfg.targetEnv;
+  const appCfg = new AppConfiguration(appConfig);
+  const targetEnv = appCfg.devEnv;
   const paramNameDDBTableName = "/fp/ddbTable";
 
   beforeAll(() => {

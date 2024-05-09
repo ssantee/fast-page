@@ -7,8 +7,8 @@ import { SubDomain } from "../../src/infra/stacks/dns/SubDomain";
 
 describe("SubDomainStack test suite", () => {
   let SubDomainStackTemplate: Template;
-  const appCfg = new AppConfiguration(appConfig, "prod");
-  const targetEnv = appCfg.targetEnv;
+  const appCfg = new AppConfiguration(appConfig);
+  const targetEnv = appCfg.devEnv;
   const mgmtEnv = appCfg.mgmtEnv;
 
   beforeAll(() => {
