@@ -5,43 +5,40 @@ import * as appConfig from "../../config/config.json";
 import { MgmtAccountStage } from "./stages/MgmtAccountStage";
 import { DevStage } from "./stages/DevStage";
 import { ProdStage } from "./stages/ProdStage";
+import { CICDStack } from "./stacks/cicd/CICDStack";
 
 const appName = "fast-page";
 const assetsDir = `${process.cwd()}/assets`;
 
-const env = {
-  account: process.env.CDK_DEFAULT_ACCOUNT,
-  region: process.env.CDK_DEFAULT_REGION,
-};
-
-if (!process.env.DEPLOY_ENV) {
-  throw new Error(
-    "DEPLOY_ENV must be set before calling CDK CLI operations. e.g.:\n\n export DEPLOY_ENV=dev;cdk synth MyStack\n\n",
-  );
-}
-
-const deployEnv = process.env.DEPLOY_ENV;
-const appCfg = new AppConfiguration(appConfig, deployEnv);
-const targetEnv = appCfg.targetEnv;
+const appCfg = new AppConfiguration(appConfig);
 const mgmtEnv = appCfg.mgmtEnv;
 
 const app = new App();
 
-new MgmtAccountStage(app, `FastPageMgmtAcctStage`, {
+const mgmtDev = new MgmtAccountStage(app, `FastPageMgmtAcctStageDev`, {
   env: { account: mgmtEnv.account, region: mgmtEnv.region },
   mgmtEnv: mgmtEnv,
-  targetEnv: targetEnv,
+  targetEnv: appCfg.devEnv,
   iamPrincipalAccountNo: mgmtEnv.account,
   apiDomain: mgmtEnv.apiDomain,
+  stackName: `FastPageMgmtAcctDNSRoleStackDev`,
 });
 
-/* start stuff that needs to be wrapped in env-specific stages */
-new DevStage(app, `FastPageDevStage`, {
-  env: env,
+const mgmtProd = new MgmtAccountStage(app, `FastPageMgmtAcctStageProd`, {
+  env: { account: mgmtEnv.account, region: mgmtEnv.region },
+  mgmtEnv: mgmtEnv,
+  targetEnv: appCfg.prodEnv,
+  iamPrincipalAccountNo: mgmtEnv.account,
+  apiDomain: mgmtEnv.apiDomain,
+  stackName: `FastPageMgmtAcctDNSRoleStackProd`,
+});
+
+const devStage = new DevStage(app, `FastPageDevStage`, {
+  env: { account: appCfg.devEnv.account, region: appCfg.devEnv.region },
   appCfg: appCfg,
   assetsDir: assetsDir,
   mgmtEnv: mgmtEnv,
-  targetEnv: targetEnv,
+  targetEnv: appCfg.devEnv,
   certificateArnParamName: appCfg.paramNames.certificateArn,
   certificateArnParamNameAdmin: appCfg.paramNames.certificateArnAdmin,
   subdomainHostedZoneIdParamName: appCfg.paramNames.subdomainHostedZoneId,
@@ -52,12 +49,12 @@ new DevStage(app, `FastPageDevStage`, {
   apiDomain: mgmtEnv.apiDomain,
 });
 
-new ProdStage(app, `FastPageProdStage`, {
-  env: env,
+const prodStage = new ProdStage(app, `FastPageProdStage`, {
+  env: { account: appCfg.prodEnv.account, region: appCfg.prodEnv.region },
   appCfg: appCfg,
   assetsDir: assetsDir,
   mgmtEnv: mgmtEnv,
-  targetEnv: targetEnv,
+  targetEnv: appCfg.prodEnv,
   certificateArnParamName: appCfg.paramNames.certificateArn,
   certificateArnParamNameAdmin: appCfg.paramNames.certificateArnAdmin,
   subdomainHostedZoneIdParamName: appCfg.paramNames.subdomainHostedZoneId,
@@ -67,6 +64,15 @@ new ProdStage(app, `FastPageProdStage`, {
   apiSubdomainHostedZoneIdParamName: appCfg.paramNames.apiDomainHostedZoneId,
   apiDomain: mgmtEnv.apiDomain,
 });
+
+const cicdStack = new CICDStack(app, `FastPageCICDStack`, {
+  env: { account: mgmtEnv.account, region: mgmtEnv.region },
+});
+
+cicdStack.pipeline.addStage(mgmtDev);
+cicdStack.pipeline.addStage(mgmtProd);
+cicdStack.pipeline.addStage(devStage);
+cicdStack.pipeline.addStage(prodStage);
 
 Tags.of(app).add("app", appName);
 

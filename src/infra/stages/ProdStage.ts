@@ -25,7 +25,7 @@ export class ProdStage extends Stage {
   constructor(scope: Construct, id: string, props: ProdStageProps) {
     super(scope, id, props);
 
-    new SubDomain(scope, `FastPageSubDomainStack`, {
+    new SubDomain(this, `FastPageProdSubDomainStack`, {
       env: props.env,
       mgmtEnvAcctNo: props.mgmtEnv.account,
       description:
@@ -36,7 +36,7 @@ export class ProdStage extends Stage {
       mgmtEnvDomain: props.mgmtEnv.domain,
     });
 
-    new SubDomain(scope, `FastPageAdminSubDomainStack`, {
+    new SubDomain(this, `FastPageProdAdminSubDomainStack`, {
       env: props.env,
       mgmtEnvAcctNo: props.mgmtEnv.account,
       description:
@@ -47,7 +47,7 @@ export class ProdStage extends Stage {
       mgmtEnvDomain: props.mgmtEnv.adminDomain,
     });
 
-    new SubDomain(scope, `FastPageApiSubDomainStack`, {
+    new SubDomain(this, `FastPageProdApiSubDomainStack`, {
       env: props.env,
       mgmtEnvAcctNo: props.mgmtEnv.account,
       description:
@@ -58,7 +58,7 @@ export class ProdStage extends Stage {
       mgmtEnvDomain: props.mgmtEnv.apiDomain,
     });
 
-    new S3CloudfrontSiteStack(scope, `FastPageWebPublicStack`, {
+    new S3CloudfrontSiteStack(this, `FastPageProdWebPublicStack`, {
       deployEnv: props.targetEnv.name,
       env: props.env,
       description: "Web Public Stack",
@@ -68,7 +68,7 @@ export class ProdStage extends Stage {
       deployEnvDomain: props.targetEnv.domain,
     });
 
-    new S3CloudfrontSiteStack(scope, `FastPageWebAdminStack`, {
+    new S3CloudfrontSiteStack(this, `FastPageProdWebAdminStack`, {
       deployEnv: props.targetEnv.name,
       env: props.env,
       description: "Web Admin Stack",
@@ -78,12 +78,12 @@ export class ProdStage extends Stage {
       deployEnvDomain: props.targetEnv.adminDomain,
     });
 
-    const auth = new Auth(scope, `FastPageAuthStack`, {
+    const auth = new Auth(this, `FastPageProdAuthStack`, {
       env: props.env,
       adminGroupName: "FastPageAdmins",
     });
 
-    new DataStack(scope, `FastPageDataStack`, {
+    new DataStack(this, `FastPageProdDataStack`, {
       env: props.env,
       paramNameDDBTableName: props.appCfg.paramNames.ddbTableName,
       paramNameDDBTableArn: props.appCfg.paramNames.ddbTableArn,
@@ -91,7 +91,7 @@ export class ProdStage extends Stage {
 
     const serviceList = ["page-service", "customer-service"];
 
-    new FunctionsStack(scope, `FastPageFunctionsStack`, {
+    new FunctionsStack(this, `FastPageProdFunctionsStack`, {
       env: props.env,
       deployEnv: props.targetEnv.name,
       paramNameDDBTableName: props.appCfg.paramNames.ddbTableName,

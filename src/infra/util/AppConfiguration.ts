@@ -24,23 +24,27 @@ export type AppConfig = {
 };
 
 export class AppConfiguration {
-  public deployEnv: string;
-  public targetEnv: EnvConfig;
+  // public deployEnv: string;
+  // public targetEnv: EnvConfig;
   public mgmtEnv: EnvConfig;
   public paramNames: ParamConfig;
+  public prodEnv: EnvConfig;
+  public devEnv: EnvConfig;
 
-  constructor(configData: AppConfig, deployEnv: string) {
+  constructor(configData: AppConfig) {
     // this helps us to determine the target env among the configured envs.
-    this.deployEnv = deployEnv;
-    this.targetEnv = this.getTargetEnv(configData.environments);
+    // this.deployEnv = deployEnv;
+    // this.targetEnv = this.getTargetEnv(configData.environments);
     this.mgmtEnv = this.getMgmtEnv(configData.environments, "root");
+    this.prodEnv = this.getMgmtEnv(configData.environments, "prod");
+    this.devEnv = this.getMgmtEnv(configData.environments, "dev");
     this.paramNames = configData.parameterNames;
   }
 
-  private getTargetEnv(envs: EnvConfig[]): EnvConfig {
-    return envs.find((e) => e.name === this.deployEnv)!;
-  }
-  private getMgmtEnv(envs: EnvConfig[], mgmtAcctName: string): EnvConfig {
-    return envs.find((e) => e.name === mgmtAcctName)!;
+  // private getTargetEnv(envs: EnvConfig[]): EnvConfig {
+  //   return envs.find((e) => e.name === this.deployEnv)!;
+  // }
+  private getMgmtEnv(envs: EnvConfig[], acctEnv: string): EnvConfig {
+    return envs.find((e) => e.name === acctEnv)!;
   }
 }
