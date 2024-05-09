@@ -7,7 +7,6 @@ import {
 import { Construct } from "constructs";
 import { Repository } from "aws-cdk-lib/aws-codecommit";
 import { Effect, PolicyStatement } from "aws-cdk-lib/aws-iam";
-import { LinuxArmLambdaBuildImage } from "aws-cdk-lib/aws-codebuild";
 
 interface CICDStackProps extends StackProps {}
 
