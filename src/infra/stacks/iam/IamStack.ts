@@ -22,7 +22,7 @@ export class IamStack extends Stack {
     role.addToPolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
-        resources: ["ssm:*"],
+        resources: ["*"],
         actions: [
           "ssm:GetParameter",
           "ssm:PutParameter",
