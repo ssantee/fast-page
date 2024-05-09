@@ -20,6 +20,7 @@ export class CICDStack extends Stack {
       crossAccountKeys: true,
       synth: new pipelines.CodeBuildStep("Synth", {
         input: pipelines.CodePipelineSource.codeCommit(repo, "add-pipeline-v2"),
+        primaryOutputDirectory: "cdk.out",
         commands: [
           "aws s3 cp s3://ss-config-store/config.json ./config",
           "export DEPLOY_ENV=",
