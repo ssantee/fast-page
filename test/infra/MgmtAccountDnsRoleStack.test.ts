@@ -22,9 +22,10 @@ describe("MgmtAcctDNSRoleStack test suite", () => {
           region: mgmtEnv.region,
         },
         mgmtEnv: mgmtEnv,
-        targetEnv: targetEnv,
         iamPrincipalAccountNo: mgmtEnv.account,
         apiDomain: mgmtEnv.apiDomain,
+        devEnv: appCfg.devEnv,
+        prodEnv: appCfg.prodEnv,
       },
     );
     MgmtAcctDNSRoleStackTemplate = Template.fromStack(mgmtAcctDNSRoleStack);
