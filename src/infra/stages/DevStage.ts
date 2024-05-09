@@ -26,12 +26,12 @@ export class DevStage extends Stage {
   constructor(scope: Construct, id: string, props: DevStageProps) {
     super(scope, id, props);
 
-    new IamStack(this, `FastPageIamStack`, {
+    const iamStack = new IamStack(this, `FastPageIamStack`, {
       env: props.env,
       mgmtAccount: props.mgmtEnv.account,
     });
 
-    new SubDomain(this, `FastPageSubDomainStack`, {
+    const sub = new SubDomain(this, `FastPageSubDomainStack`, {
       env: props.env,
       mgmtEnvAcctNo: props.mgmtEnv.account,
       description:
@@ -42,7 +42,9 @@ export class DevStage extends Stage {
       mgmtEnvDomain: props.mgmtEnv.domain,
     });
 
-    new SubDomain(this, `FastPageAdminSubDomainStack`, {
+    sub.addDependency(iamStack);
+
+    const subAdmin = new SubDomain(this, `FastPageAdminSubDomainStack`, {
       env: props.env,
       mgmtEnvAcctNo: props.mgmtEnv.account,
       description:
@@ -53,7 +55,9 @@ export class DevStage extends Stage {
       mgmtEnvDomain: props.mgmtEnv.adminDomain,
     });
 
-    new SubDomain(this, `FastPageApiSubDomainStack`, {
+    subAdmin.addDependency(iamStack);
+
+    const subApi = new SubDomain(this, `FastPageApiSubDomainStack`, {
       env: props.env,
       mgmtEnvAcctNo: props.mgmtEnv.account,
       description:
@@ -63,6 +67,8 @@ export class DevStage extends Stage {
       deployEnvDomain: props.targetEnv.apiDomain,
       mgmtEnvDomain: props.mgmtEnv.apiDomain,
     });
+
+    subApi.addDependency(iamStack);
 
     new S3CloudfrontSiteStack(this, `FastPageWebPublicStack`, {
       deployEnv: props.targetEnv.name,
