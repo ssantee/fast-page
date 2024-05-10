@@ -45,6 +45,7 @@ const prodStage = new DeploymentStage(app, `FPProdStage`, {
 
 const cicdStack = new CICDStack(app, `FPCICDStack`, {
   env: { account: mgmtEnv.account, region: mgmtEnv.region },
+  appCfg: appCfg,
 });
 
 cicdStack.pipeline.addStage(mgmtStage);
