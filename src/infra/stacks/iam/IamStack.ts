@@ -27,17 +27,10 @@ export class IamStack extends Stack {
         ],
         conditions: {
           StringEquals: {
-            "ssm:resourceTag/managedBy": "aws:cdk",
+            "ssm:resourceTag/aws:cloudformation:stack-id": `${this.stackId}`,
           },
         },
       }),
     );
-
-    // role.assumeRolePolicy?.addStatements(
-    //   new iam.PolicyStatement({
-    //     actions: ["sts:AssumeRole"],
-    //     principals: [new iam.AccountPrincipal(props.mgmtAccount)],
-    //   }),
-    // );
   }
 }
