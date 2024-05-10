@@ -47,7 +47,24 @@ describe("MgmtAcctDNSRoleStack test suite", () => {
                     {
                       Ref: "AWS::Partition",
                     },
-                    `:iam::${targetEnv.account}:root`,
+                    `:iam::${appCfg.devEnv.account}:root`,
+                  ],
+                ],
+              },
+            },
+          },
+          {
+            Effect: "Allow",
+            Principal: {
+              AWS: {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      Ref: "AWS::Partition",
+                    },
+                    `:iam::${appCfg.prodEnv.account}:root`,
                   ],
                 ],
               },

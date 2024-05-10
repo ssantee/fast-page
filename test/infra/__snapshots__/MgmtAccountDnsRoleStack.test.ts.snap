@@ -169,6 +169,24 @@ exports[`Matches snapshot 1`] = `
                 },
               },
             },
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":iam::339712782235:root",
+                    ],
+                  ],
+                },
+              },
+            },
           ],
           "Version": "2012-10-17",
         },
