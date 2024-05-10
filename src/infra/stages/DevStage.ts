@@ -78,7 +78,7 @@ export class DevStage extends Stage {
       certificateArnParamName: props.appCfg.paramNames.certificateArn,
       hzIdParamName: props.appCfg.paramNames.subdomainHostedZoneId,
       deployEnvDomain: props.targetEnv.domain,
-    });
+    }).addDependency(sub);
 
     new S3CloudfrontSiteStack(this, `FastPageWebAdminStack`, {
       deployEnv: props.targetEnv.name,
@@ -88,7 +88,7 @@ export class DevStage extends Stage {
       certificateArnParamName: props.appCfg.paramNames.certificateArnAdmin,
       hzIdParamName: props.appCfg.paramNames.adminSubdomainHostedZoneId,
       deployEnvDomain: props.targetEnv.adminDomain,
-    });
+    }).addDependency(subAdmin);
 
     const auth = new Auth(this, `FastPageAuthStack`, {
       env: props.env,
@@ -113,6 +113,6 @@ export class DevStage extends Stage {
       apiDomain: props.targetEnv.apiDomain,
       certificateArnParamName: props.appCfg.paramNames.certificateArnApi,
       hzIdParamName: props.appCfg.paramNames.apiDomainHostedZoneId,
-    });
+    }).addDependency(subApi);
   }
 }

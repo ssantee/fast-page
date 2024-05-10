@@ -26,12 +26,12 @@ export class ProdStage extends Stage {
   constructor(scope: Construct, id: string, props: ProdStageProps) {
     super(scope, id, props);
 
-    new IamStack(this, `FastPageIamStack`, {
+    const iamStack = new IamStack(this, `FastPageIamStack`, {
       env: props.env,
       mgmtAccount: props.mgmtEnv.account,
     });
 
-    new SubDomain(this, `FastPageProdSubDomainStack`, {
+    const sub = new SubDomain(this, `FastPageProdSubDomainStack`, {
       env: props.env,
       mgmtEnvAcctNo: props.mgmtEnv.account,
       description:
@@ -42,7 +42,9 @@ export class ProdStage extends Stage {
       mgmtEnvDomain: props.mgmtEnv.domain,
     });
 
-    new SubDomain(this, `FastPageProdAdminSubDomainStack`, {
+    sub.addDependency(iamStack);
+
+    const subAdmin = new SubDomain(this, `FastPageProdAdminSubDomainStack`, {
       env: props.env,
       mgmtEnvAcctNo: props.mgmtEnv.account,
       description:
@@ -53,7 +55,9 @@ export class ProdStage extends Stage {
       mgmtEnvDomain: props.mgmtEnv.adminDomain,
     });
 
-    new SubDomain(this, `FastPageProdApiSubDomainStack`, {
+    subAdmin.addDependency(iamStack);
+
+    const subApi = new SubDomain(this, `FastPageProdApiSubDomainStack`, {
       env: props.env,
       mgmtEnvAcctNo: props.mgmtEnv.account,
       description:
@@ -64,6 +68,8 @@ export class ProdStage extends Stage {
       mgmtEnvDomain: props.mgmtEnv.apiDomain,
     });
 
+    subApi.addDependency(iamStack);
+
     new S3CloudfrontSiteStack(this, `FastPageProdWebPublicStack`, {
       deployEnv: props.targetEnv.name,
       env: props.env,
@@ -72,7 +78,7 @@ export class ProdStage extends Stage {
       certificateArnParamName: props.appCfg.paramNames.certificateArn,
       hzIdParamName: props.appCfg.paramNames.subdomainHostedZoneId,
       deployEnvDomain: props.targetEnv.domain,
-    });
+    }).addDependency(sub);
 
     new S3CloudfrontSiteStack(this, `FastPageProdWebAdminStack`, {
       deployEnv: props.targetEnv.name,
@@ -82,7 +88,7 @@ export class ProdStage extends Stage {
       certificateArnParamName: props.appCfg.paramNames.certificateArnAdmin,
       hzIdParamName: props.appCfg.paramNames.adminSubdomainHostedZoneId,
       deployEnvDomain: props.targetEnv.adminDomain,
-    });
+    }).addDependency(subAdmin);
 
     const auth = new Auth(this, `FastPageProdAuthStack`, {
       env: props.env,
@@ -107,6 +113,6 @@ export class ProdStage extends Stage {
       apiDomain: props.targetEnv.apiDomain,
       certificateArnParamName: props.appCfg.paramNames.certificateArnApi,
       hzIdParamName: props.appCfg.paramNames.apiDomainHostedZoneId,
-    });
+    }).addDependency(subApi);
   }
 }
