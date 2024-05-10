@@ -1,11 +1,6 @@
 import { aws_iam as iam, Stack, StackProps } from "aws-cdk-lib";
 import { Construct } from "constructs";
-import {
-  Effect,
-  PolicyStatement,
-  Role,
-  ServicePrincipal,
-} from "aws-cdk-lib/aws-iam";
+import { Effect, PolicyStatement, Role } from "aws-cdk-lib/aws-iam";
 
 interface IamStackProps extends StackProps {
   mgmtAccount: string;
