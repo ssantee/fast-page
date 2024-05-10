@@ -26,8 +26,6 @@ export type AppConfig = {
 };
 
 export class AppConfiguration {
-  // public deployEnv: string;
-  // public targetEnv: EnvConfig;
   public mgmtEnv: EnvConfig;
   public paramNames: ParamConfig;
   public prodEnv: EnvConfig;
@@ -36,9 +34,6 @@ export class AppConfiguration {
   public repositoryArn: string;
 
   constructor(configData: AppConfig) {
-    // this helps us to determine the target env among the configured envs.
-    // this.deployEnv = deployEnv;
-    // this.targetEnv = this.getTargetEnv(configData.environments);
     this.mgmtEnv = this.getMgmtEnv(configData.environments, "root");
     this.prodEnv = this.getMgmtEnv(configData.environments, "prod");
     this.devEnv = this.getMgmtEnv(configData.environments, "dev");
@@ -47,9 +42,6 @@ export class AppConfiguration {
     this.repositoryArn = configData.repositoryArn;
   }
 
-  // private getTargetEnv(envs: EnvConfig[]): EnvConfig {
-  //   return envs.find((e) => e.name === this.deployEnv)!;
-  // }
   private getMgmtEnv(envs: EnvConfig[], acctEnv: string): EnvConfig {
     return envs.find((e) => e.name === acctEnv)!;
   }
