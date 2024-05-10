@@ -16,7 +16,7 @@ export class IamStack extends Stack {
     super(scope, id, props);
 
     const role = new Role(this, "SSMAccessRole", {
-      assumedBy: new ServicePrincipal("codebuild.amazonaws.com"),
+      assumedBy: new iam.AccountPrincipal(props.mgmtAccount),
     });
 
     role.addToPolicy(
@@ -38,11 +38,11 @@ export class IamStack extends Stack {
       }),
     );
 
-    role.assumeRolePolicy?.addStatements(
-      new iam.PolicyStatement({
-        actions: ["sts:AssumeRole"],
-        principals: [new iam.AccountPrincipal(props.mgmtAccount)],
-      }),
-    );
+    // role.assumeRolePolicy?.addStatements(
+    //   new iam.PolicyStatement({
+    //     actions: ["sts:AssumeRole"],
+    //     principals: [new iam.AccountPrincipal(props.mgmtAccount)],
+    //   }),
+    // );
   }
 }
