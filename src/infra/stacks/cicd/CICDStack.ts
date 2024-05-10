@@ -7,8 +7,11 @@ import {
 import { Construct } from "constructs";
 import { Repository } from "aws-cdk-lib/aws-codecommit";
 import { Effect, PolicyStatement } from "aws-cdk-lib/aws-iam";
+import { AppConfiguration } from "../../util/AppConfiguration";
 
-interface CICDStackProps extends StackProps {}
+interface CICDStackProps extends StackProps {
+  appCfg: AppConfiguration;
+}
 
 export class CICDStack extends Stack {
   public pipeline: pipelines.CodePipeline;
@@ -18,10 +21,10 @@ export class CICDStack extends Stack {
     const repo = Repository.fromRepositoryArn(
       this,
       "Repo",
-      "arn:aws:codecommit:us-east-1:573259953910:fast-page",
+      props.appCfg.repositoryArn,
     );
 
-    this.pipeline = new pipelines.CodePipeline(this, "Pipeline", {
+    this.pipeline = new pipelines.CodePipeline(this, "FPPipeline", {
       crossAccountKeys: true,
       codeBuildDefaults: {
         buildEnvironment: {
@@ -33,7 +36,7 @@ export class CICDStack extends Stack {
         input: pipelines.CodePipelineSource.codeCommit(repo, "add-pipeline-v2"),
         primaryOutputDirectory: "cdk.out",
         commands: [
-          "aws s3 cp s3://ss-config-store/config.json ./config",
+          `aws s3 cp s3://${props.appCfg.configBucketName}/config.json ./config`,
           "npm ci",
           "npm run build",
           "npx cdk synth",
@@ -41,7 +44,9 @@ export class CICDStack extends Stack {
         rolePolicyStatements: [
           new PolicyStatement({
             actions: ["s3:GetObject"],
-            resources: ["arn:aws:s3:::ss-config-store/config.json"],
+            resources: [
+              `arn:aws:s3:::${props.appCfg.configBucketName}/config.json`,
+            ],
             effect: Effect.ALLOW,
           }),
         ],

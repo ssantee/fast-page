@@ -21,6 +21,8 @@ type ParamConfig = {
 export type AppConfig = {
   environments: EnvConfig[];
   parameterNames: ParamConfig;
+  configBucketName: string;
+  repositoryArn: string;
 };
 
 export class AppConfiguration {
@@ -30,6 +32,8 @@ export class AppConfiguration {
   public paramNames: ParamConfig;
   public prodEnv: EnvConfig;
   public devEnv: EnvConfig;
+  public configBucketName: string;
+  public repositoryArn: string;
 
   constructor(configData: AppConfig) {
     // this helps us to determine the target env among the configured envs.
@@ -39,6 +43,8 @@ export class AppConfiguration {
     this.prodEnv = this.getMgmtEnv(configData.environments, "prod");
     this.devEnv = this.getMgmtEnv(configData.environments, "dev");
     this.paramNames = configData.parameterNames;
+    this.configBucketName = configData.configBucketName;
+    this.repositoryArn = configData.repositoryArn;
   }
 
   // private getTargetEnv(envs: EnvConfig[]): EnvConfig {
