@@ -6,12 +6,7 @@ import {
   UserPool,
   UserPoolClient,
 } from "aws-cdk-lib/aws-cognito";
-import {
-  Effect,
-  FederatedPrincipal,
-  PolicyStatement,
-  Role,
-} from "aws-cdk-lib/aws-iam";
+import { FederatedPrincipal, Role } from "aws-cdk-lib/aws-iam";
 import { Construct } from "constructs";
 import { constructIds } from "./constructIds";
 

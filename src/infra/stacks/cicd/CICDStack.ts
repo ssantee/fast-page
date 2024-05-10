@@ -29,11 +29,9 @@ export class CICDStack extends Stack {
         },
       },
       synth: new pipelines.CodeBuildStep("Synth", {
+        // TODO - update branch name
         input: pipelines.CodePipelineSource.codeCommit(repo, "add-pipeline-v2"),
         primaryOutputDirectory: "cdk.out",
-        buildEnvironment: {
-          buildImage: codebuild.LinuxArmBuildImage.AMAZON_LINUX_2_STANDARD_3_0,
-        },
         commands: [
           "aws s3 cp s3://ss-config-store/config.json ./config",
           "npm ci",

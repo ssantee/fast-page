@@ -7,7 +7,6 @@ export interface MgmtAccountStageProps extends StageProps {
   mgmtEnv: EnvConfig;
   apiDomain: string;
   iamPrincipalAccountNo: string;
-  stackName: string;
   devEnv: EnvConfig;
   prodEnv: EnvConfig;
 }
@@ -16,7 +15,7 @@ export class MgmtAccountStage extends Stage {
   constructor(scope: Construct, id: string, props: MgmtAccountStageProps) {
     super(scope, id, props);
 
-    new MgmtAcctDNSRoleStack(this, props.stackName, {
+    new MgmtAcctDNSRoleStack(this, `FPMgmtAcctDNSRoleStack`, {
       env: { account: props.mgmtEnv.account, region: props.mgmtEnv.region },
       description: "Cross-account delegation role for Fast Page subdomains.",
       mgmtEnv: props.mgmtEnv,
