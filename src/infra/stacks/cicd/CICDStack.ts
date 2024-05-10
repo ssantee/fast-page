@@ -32,8 +32,7 @@ export class CICDStack extends Stack {
         },
       },
       synth: new pipelines.CodeBuildStep("Synth", {
-        // TODO - update branch name
-        input: pipelines.CodePipelineSource.codeCommit(repo, "add-pipeline-v2"),
+        input: pipelines.CodePipelineSource.codeCommit(repo, "master"),
         primaryOutputDirectory: "cdk.out",
         commands: [
           `aws s3 cp s3://${props.appCfg.configBucketName}/config.json ./config`,
