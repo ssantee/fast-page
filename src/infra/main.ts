@@ -23,35 +23,33 @@ const mgmtStage = new MgmtAccountStage(app, `FPMgmtAcctStage`, {
   apiDomain: mgmtEnv.apiDomain,
 });
 
-const devStage = new DeploymentStage(app, `FPDevStage`, {
-  env: { account: appCfg.devEnv.account, region: appCfg.devEnv.region },
-  appCfg: appCfg,
-  assetsDir: assetsDir,
-  mgmtEnv: mgmtEnv,
-  targetEnv: appCfg.devEnv,
-  apiDomain: mgmtEnv.apiDomain,
-  constructIdKey: "Dev",
-});
-
-const prodStage = new DeploymentStage(app, `FPProdStage`, {
-  env: { account: appCfg.prodEnv.account, region: appCfg.prodEnv.region },
-  appCfg: appCfg,
-  assetsDir: assetsDir,
-  mgmtEnv: mgmtEnv,
-  targetEnv: appCfg.prodEnv,
-  apiDomain: mgmtEnv.apiDomain,
-  constructIdKey: "Prod",
-});
-
 const cicdStack = new CICDStack(app, `FPCICDStack`, {
   env: { account: mgmtEnv.account, region: mgmtEnv.region },
   appCfg: appCfg,
 });
 
 cicdStack.pipeline.addStage(mgmtStage);
-cicdStack.pipeline.addStage(devStage);
-cicdStack.pipeline.addStage(prodStage, {
-  pre: [new pipelines.ManualApprovalStep("DeployProd")],
+
+appCfg.deployableEnvs.forEach((env) => {
+  let options = {};
+
+  if (env.pipelineRequiresApproval) {
+    options = {
+      pre: [new pipelines.ManualApprovalStep(`Deploy${env.constructIdPart!}`)],
+    };
+  }
+
+  cicdStack.pipeline.addStage(
+    new DeploymentStage(app, `FP${env.constructIdPart}Stage`, {
+      env: { account: env.account, region: env.region },
+      appCfg: appCfg,
+      assetsDir: assetsDir,
+      mgmtEnv: mgmtEnv,
+      targetEnv: env,
+      constructIdKey: env.constructIdPart!,
+    }),
+    options,
+  );
 });
 
 Tags.of(app).add("app", appName);

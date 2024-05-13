@@ -11,7 +11,6 @@ export interface DeploymentStageProps extends StageProps {
   assetsDir: string;
   mgmtEnv: EnvConfig;
   targetEnv: EnvConfig;
-  apiDomain: string;
   appCfg: AppConfiguration;
   constructIdKey: string;
 }

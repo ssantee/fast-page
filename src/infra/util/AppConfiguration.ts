@@ -5,6 +5,8 @@ export type EnvConfig = {
   region: string;
   adminDomain: string;
   apiDomain: string;
+  constructIdPart?: string;
+  pipelineRequiresApproval?: boolean;
 };
 
 type ParamConfig = {
@@ -32,17 +34,34 @@ export class AppConfiguration {
   public devEnv: EnvConfig;
   public configBucketName: string;
   public repositoryArn: string;
+  public deployableEnvs: EnvConfig[] = [];
 
   constructor(configData: AppConfig) {
-    this.mgmtEnv = this.getMgmtEnv(configData.environments, "root");
-    this.prodEnv = this.getMgmtEnv(configData.environments, "prod");
-    this.devEnv = this.getMgmtEnv(configData.environments, "dev");
+    this.mgmtEnv = this.getEnvByName(configData.environments, "root");
+    this.prodEnv = this.getEnvByName(configData.environments, "prod");
+    this.devEnv = this.getEnvByName(configData.environments, "dev");
     this.paramNames = configData.parameterNames;
     this.configBucketName = configData.configBucketName;
     this.repositoryArn = configData.repositoryArn;
+    this.deployableEnvs = configData.environments.filter(
+      (e) => e.name !== "root",
+    );
+
+    const envNamesValidLength = this.deployableEnvs.every((env) => {
+      return env.name.length >= 3;
+    });
+
+    if (!envNamesValidLength) {
+      throw new Error("Environment names must be at least 3 characters.");
+    }
+
+    this.deployableEnvs.forEach((env) => {
+      env.constructIdPart =
+        env.name.charAt(0).toUpperCase() + env.name.slice(1);
+    });
   }
 
-  private getMgmtEnv(envs: EnvConfig[], acctEnv: string): EnvConfig {
+  private getEnvByName(envs: EnvConfig[], acctEnv: string): EnvConfig {
     return envs.find((e) => e.name === acctEnv)!;
   }
 }
