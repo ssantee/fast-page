@@ -6,6 +6,7 @@ import { Auth } from "../stacks/auth/Auth";
 import DataStack from "../stacks/data/DataStack";
 import FunctionsStack from "../stacks/functions/FunctionsStack";
 import { SubDomain } from "../stacks/dns/SubDomain";
+import { ECSSiteStack } from "../stacks/ecs-site/ECSSiteStack";
 
 export interface DeploymentStageProps extends StageProps {
   assetsDir: string;
@@ -73,7 +74,7 @@ export class DeploymentStage extends Stage {
       deployEnvDomain: props.targetEnv.domain,
     }).addDependency(sub);
 
-    new S3CloudfrontSiteStack(this, `FP${props.constructIdKey}WebAdminStack`, {
+    new ECSSiteStack(this, `FP${props.constructIdKey}ECSSiteStack`, {
       deployEnv: props.targetEnv.name,
       env: props.env,
       description: "Web Admin Stack",

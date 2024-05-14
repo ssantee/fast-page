@@ -46,6 +46,16 @@ export class S3CloudfrontSiteStack extends Stack {
         removalPolicy: bucketRemovalPolicy,
         autoDeleteObjects: autoRemoveObjects,
       },
+      loggingBucketProps: {
+        removalPolicy: bucketRemovalPolicy,
+        autoDeleteObjects: autoRemoveObjects,
+        versioned: false,
+      },
+      cloudFrontLoggingBucketProps: {
+        removalPolicy: bucketRemovalPolicy,
+        autoDeleteObjects: autoRemoveObjects,
+        versioned: false,
+      },
       cloudFrontDistributionProps: {
         domainNames: [props.deployEnvDomain],
         certificate: Certificate.fromCertificateArn(
