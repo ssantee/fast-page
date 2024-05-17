@@ -13,6 +13,8 @@
     "cdk": "cdk"
   },
   "devDependencies": {
+    "@aws-amplify/backend": "^1.0.2",
+    "@aws-amplify/backend-cli": "^1.0.3",
     "@eslint/eslintrc": "^3.0.2",
     "@eslint/js": "^9.1.1",
     "@types/jest": "^29.5.12",
