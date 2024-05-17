@@ -47,53 +47,59 @@ export class ECSSiteStack extends Stack {
       }),
     );
 
-    new aws_ecs_patterns.ApplicationLoadBalancedFargateService(
-      this,
-      "ECSService",
-      {
-        cluster,
-        memoryLimitMiB: 1024,
-        cpu: 512,
-        desiredCount: 1,
-        taskImageOptions: {
-          image: image,
-          containerPort: 3000,
-          environment: {
-            ENVIRONMENT: props.deployEnv,
+    const fargateService =
+      new aws_ecs_patterns.ApplicationLoadBalancedFargateService(
+        this,
+        "ECSService",
+        {
+          cluster,
+          memoryLimitMiB: 1024,
+          cpu: 512,
+          desiredCount: 1,
+          taskImageOptions: {
+            image: image,
+            containerPort: 3000,
+            environment: {
+              ENVIRONMENT: props.deployEnv,
+            },
           },
-        },
-        runtimePlatform: {
-          operatingSystemFamily: ecs.OperatingSystemFamily.LINUX,
-          cpuArchitecture: ecs.CpuArchitecture.ARM64,
-        },
-        healthCheck: {
-          command: ["CMD-SHELL", "curl -f http://localhost:3000/ || exit 0"],
-          // the properties below are optional
-          interval: Duration.seconds(30),
-          retries: 1,
-          startPeriod: Duration.seconds(90),
-          timeout: Duration.seconds(5),
-        },
-        protocol: ApplicationProtocol.HTTPS,
-        certificate: Certificate.fromCertificateArn(
-          this,
-          "Cert",
-          certificateArn,
-        ),
-        sslPolicy: SslPolicy.RECOMMENDED_TLS,
-        redirectHTTP: true,
-        recordType: ApplicationLoadBalancedServiceRecordType.ALIAS,
-        idleTimeout: Duration.seconds(400),
-        domainName: props.deployEnvDomain,
-        domainZone: route53.PublicHostedZone.fromPublicHostedZoneAttributes(
-          this,
-          "HostedZoneRecord",
-          {
-            hostedZoneId: hostedZoneId,
-            zoneName: props.deployEnvDomain,
+          runtimePlatform: {
+            operatingSystemFamily: ecs.OperatingSystemFamily.LINUX,
+            cpuArchitecture: ecs.CpuArchitecture.ARM64,
           },
-        ),
-      },
+          healthCheck: {
+            command: ["CMD-SHELL", "curl -f http://localhost:3000/ || exit 0"],
+            // the properties below are optional
+            interval: Duration.seconds(30),
+            retries: 1,
+            startPeriod: Duration.seconds(90),
+            timeout: Duration.seconds(5),
+          },
+          protocol: ApplicationProtocol.HTTPS,
+          certificate: Certificate.fromCertificateArn(
+            this,
+            "Cert",
+            certificateArn,
+          ),
+          sslPolicy: SslPolicy.RECOMMENDED_TLS,
+          redirectHTTP: true,
+          recordType: ApplicationLoadBalancedServiceRecordType.ALIAS,
+          idleTimeout: Duration.seconds(400),
+          domainName: props.deployEnvDomain,
+          domainZone: route53.PublicHostedZone.fromPublicHostedZoneAttributes(
+            this,
+            "HostedZoneRecord",
+            {
+              hostedZoneId: hostedZoneId,
+              zoneName: props.deployEnvDomain,
+            },
+          ),
+        },
+      );
+
+    fargateService.targetGroup.enableCookieStickiness(
+      Duration.days(1),
+      "fp-session",
     );
   }
 }
