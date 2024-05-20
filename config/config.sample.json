@@ -1,28 +1,32 @@
 {
+  "repositoryArn": "arn:aws:codecommit:us-west-1:123456789:my-repo",
+  "configBucketName": "some-bucket-name",
   "environments": [
     {
       "name": "root",
-      "domain": "app.example.com",
-      "adminDomain": "app-admin.example.com",
-      "apiDomain": "app-api.example.com",
-      "account": "0123456789",
-      "region": "us-east-1"
+      "domain": "fp.example.com",
+      "adminDomain": "fpadmin.example.com",
+      "apiDomain": "fpapi.example.com",
+      "account": "123456789",
+      "region": "us-west-1"
     },
     {
       "name": "dev",
-      "domain": "dev.app.example.com",
-      "adminDomain": "dev.app-admin.example.com",
-      "apiDomain": "dev.app-api.example.com",
-      "account": "1123456789",
-      "region": "us-east-1"
+      "domain": "dev.fp.example.com",
+      "adminDomain": "dev.fpadmin.example.com",
+      "apiDomain": "dev.fpapi.example.com",
+      "account": "123456789",
+      "region": "us-west-1",
+      "pipelineRequiresApproval": false
     },
     {
       "name": "prod",
-      "domain": "prod.app.example.com",
-      "adminDomain": "prod.app-admin.example.com",
-      "apiDomain": "prod.app-api.example.com",
-      "account": "2123456789",
-      "region": "us-east-1"
+      "domain": "prod.fp.example.com",
+      "adminDomain": "prod.fpadmin.example.com",
+      "apiDomain": "prod.fpapi.example.com",
+      "account": "123456789",
+      "region": "us-west-1",
+      "pipelineRequiresApproval": true
     }
   ],
   "parameterNames": {
@@ -33,6 +37,7 @@
     "adminSubdomainHostedZoneId": "/fp/adminSubdomainHostedZoneId",
     "apiDomainHostedZoneId": "/fp/apidomainHostedZoneId",
     "ddbTableName": "/fp/ddbTable",
-    "ddbTableArn": "/fp/ddbTableArn"
+    "ddbTableArn": "/fp/ddbTableArn",
+    "userPoolArn": "/fp/userPoolArn"
   }
 }
