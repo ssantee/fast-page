@@ -10,13 +10,15 @@ import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import { useAuthenticator } from "@aws-amplify/ui-react";
 import User from "@/components/user";
-import { AmplifyUser } from "@aws-amplify/ui";
+import { AuthUser } from "@aws-amplify/auth";
+import { AuthStatus } from "@aws-amplify/ui";
+
 const pages = ["Dashboard"];
 
 interface NavProps {
-  user: AmplifyUser;
+  authStatus: AuthStatus;
+  user?: AuthUser;
   signOut: () => void;
   toSignUp: () => void;
 }
@@ -145,7 +147,7 @@ export default function Nav({ user, signOut, toSignUp }: NavProps) {
                     onClick={handleOpenUserMenu}
                     sx={{ p: 0, textTransform: "none" }}
                   >
-                    <User />
+                    <User user={user} />
                   </Button>
                 </Tooltip>
                 <Menu
