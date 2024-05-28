@@ -34,3 +34,9 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+## Amplify
+Helpful doc to understand integration of Amplify with Next.js
+https://aws.amazon.com/blogs/mobile/amplify-javascript-v6/
+https://docs.amplify.aws/gen1/react/build-a-backend/server-side-rendering/nextjs/#calling-amplify-category-apis-on-the-server-side
+

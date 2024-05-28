@@ -1,12 +1,11 @@
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import Nav from "@/components/nav";
-import { redirect } from "next/navigation";
 
 export default function Dashboard() {
   const { user, authStatus, signOut, toSignUp } = useAuthenticator(
     (context) => [context.user],
   );
-  return authStatus === "authenticated" ? (
+  return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <Nav
         authStatus={authStatus}
@@ -21,8 +20,5 @@ export default function Dashboard() {
         </p>
       </div>
     </main>
-  ) : (
-    // these don't work in this context
-    redirect("/")
   );
 }
