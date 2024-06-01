@@ -1,0 +1,10 @@
+.auth-extras{
+    display: flex;
+    justify-content: center;
+}
+.auth-extras-footer{
+    margin-top: 20px;
+}
+.auth-extras-header{
+    margin-bottom: 20px;
+}

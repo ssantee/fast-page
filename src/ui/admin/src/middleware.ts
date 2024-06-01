@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkAuth } from "@/services/AuthService";
 
-const publicPaths: string[] = ["/"];
+const publicPaths: string[] = ["/", "/public/login"];
 
 export async function middleware(request: NextRequest) {
   const authenticated = await checkAuth();

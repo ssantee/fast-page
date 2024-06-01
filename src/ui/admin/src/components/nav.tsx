@@ -1,3 +1,4 @@
+"use client";
 import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -11,19 +12,29 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import User from "@/components/user";
-import { AuthUser } from "@aws-amplify/auth";
-import { AuthStatus } from "@aws-amplify/ui";
+import Link from "next/link";
+import MuiLink from "@mui/material/Link";
+import { Amplify } from "aws-amplify";
+import config from "@/amplifyconfiguration.json";
+import { useAuthenticator } from "@aws-amplify/ui-react";
+import { useTheme } from "@mui/material/styles";
+import { useContext } from "react";
+import { ColorModeContext } from "@/app/(admin)/layout";
+import ColorModeToggle from "@/components/colorModeToggle";
+Amplify.configure(config, { ssr: true });
 
-const pages = ["Dashboard"];
+const pages = [{ label: "Dashboard", href: "/dashboard" }];
+const publicPages = [{ label: "Login", href: "/login" }];
 
-interface NavProps {
-  authStatus: AuthStatus;
-  user?: AuthUser;
-  signOut: () => void;
-  toSignUp: () => void;
-}
+export default function Nav() {
+  const { authStatus, user, signOut } = useAuthenticator((context) => [
+    context.user,
+  ]);
 
-export default function Nav({ user, signOut, toSignUp }: NavProps) {
+  const theme = useTheme();
+  const colorContext = useContext(ColorModeContext);
+  const renderPages = authStatus === "authenticated" ? pages : publicPages;
+
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null,
   );
@@ -75,7 +86,6 @@ export default function Nav({ user, signOut, toSignUp }: NavProps) {
               aria-controls="menu-appbar"
               aria-haspopup="true"
               onClick={handleOpenNavMenu}
-              color="inherit"
             >
               <MenuIcon />
             </IconButton>
@@ -97,16 +107,15 @@ export default function Nav({ user, signOut, toSignUp }: NavProps) {
                 display: { xs: "block", md: "none" },
               }}
             >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+              {renderPages.map((page) => (
+                <MenuItem key={page.label} onClick={handleCloseNavMenu}>
+                  <Typography textAlign="center">
+                    <MuiLink href="/public/login" component={Link}>
+                      Login
+                    </MuiLink>
+                  </Typography>
                 </MenuItem>
               ))}
-              {!user && (
-                <MenuItem key={"SignUp"} onClick={toSignUp}>
-                  <Typography textAlign="center">Sign Up</Typography>
-                </MenuItem>
-              )}
             </Menu>
           </Box>
           <Typography
@@ -121,20 +130,25 @@ export default function Nav({ user, signOut, toSignUp }: NavProps) {
               fontFamily: "monospace",
               fontWeight: 700,
               letterSpacing: ".3rem",
-              color: "inherit",
               textDecoration: "none",
             }}
           >
             LOGO
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
+            {renderPages.map((page) => (
               <Button
-                key={page}
+                key={page.label}
                 onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: "white", display: "block" }}
+                sx={{ my: 2, display: "block" }}
               >
-                {page}
+                <MuiLink
+                  href={page.href}
+                  component={Link}
+                  color={theme.palette.primary.contrastText}
+                >
+                  {page.label}
+                </MuiLink>
               </Button>
             ))}
           </Box>
@@ -145,7 +159,11 @@ export default function Nav({ user, signOut, toSignUp }: NavProps) {
                 <Tooltip title="Open settings">
                   <Button
                     onClick={handleOpenUserMenu}
-                    sx={{ p: 0, textTransform: "none" }}
+                    sx={{
+                      p: 0,
+                      textTransform: "none",
+                      color: theme.palette.primary.contrastText,
+                    }}
                   >
                     <User user={user} />
                   </Button>
@@ -166,20 +184,25 @@ export default function Nav({ user, signOut, toSignUp }: NavProps) {
                   open={Boolean(anchorElUser)}
                   onClose={handleCloseUserMenu}
                 >
-                  <MenuItem
-                    key={"LogOut"}
-                    onClick={() => {
-                      handleCloseUserMenu();
-                      signOut();
-                    }}
-                  >
-                    <Typography textAlign="center">Log out</Typography>
+                  <MenuItem key={"ColorMode"}>
+                    <ColorModeToggle
+                      toggleHandler={() => {
+                        colorContext.toggleColorMode();
+                      }}
+                    />
                   </MenuItem>
-                  {/*{settings.map((setting) => (*/}
-                  {/*  <MenuItem key={setting} onClick={handleCloseUserMenu}>*/}
-                  {/*    <Typography textAlign="center">{setting}</Typography>*/}
-                  {/*  </MenuItem>*/}
-                  {/*))}*/}
+                  {signOut && (
+                    <MenuItem
+                      key={"LogOut"}
+                      onClick={() => {
+                        handleCloseUserMenu();
+                        signOut();
+                        window.location.href = "/";
+                      }}
+                    >
+                      Log out
+                    </MenuItem>
+                  )}
                 </Menu>
               </>
             )}
