@@ -21,7 +21,6 @@ import { useTheme } from "@mui/material/styles";
 import { useContext } from "react";
 import { ColorModeContext } from "@/app/(admin)/layout";
 import ColorModeToggle from "@/components/colorModeToggle";
-import { minHeight } from "@mui/system";
 import { Skeleton } from "@mui/material";
 Amplify.configure(config, { ssr: true });
 
