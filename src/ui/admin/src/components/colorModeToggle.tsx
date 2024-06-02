@@ -1,26 +1,26 @@
 import * as React from "react";
 import { styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
-import { FormControlLabel } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
+import { FormControlLabel, PaletteMode } from "@mui/material";
 import { SyntheticEvent } from "react";
 
 interface ColorModeProps {
   toggleHandler: () => void;
+  setColorMode: (mode: PaletteMode) => void;
+  checked: boolean;
+  setChecked: (checked: boolean) => void;
 }
 
 export default function ColorModeToggle(props: ColorModeProps) {
-  const [checked, setChecked] = React.useState(false);
+  // const [checked, setChecked] = React.useState(false);
 
   const handleChange = (
     event: SyntheticEvent<Element, Event>,
     checked: boolean,
   ) => {
     props.toggleHandler();
-    setChecked(checked);
+    props.setChecked(checked);
   };
-
-  const theme = useTheme();
 
   const MaterialUISwitch = styled(Switch)(({ theme }) => ({
     width: 62,
@@ -72,7 +72,7 @@ export default function ColorModeToggle(props: ColorModeProps) {
 
   return (
     <FormControlLabel
-      checked={checked}
+      checked={props.checked}
       onChange={handleChange}
       control={<MaterialUISwitch sx={{ m: 1 }} />}
       label="Toggle Color Mode"

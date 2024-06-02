@@ -9,7 +9,9 @@ import getDesignTokens from "@/app/(admin)/theme";
 import * as React from "react";
 import { PaletteMode } from "@mui/material";
 import Nav from "@/components/nav";
+import { useCookies } from "react-cookie";
 
+const cookieName = "color-mode";
 // export const metadata: Metadata = {
 //   title: "FastPage Admin Site",
 //   description: "Admin site for FastPage",
@@ -17,6 +19,8 @@ import Nav from "@/components/nav";
 
 export const ColorModeContext = React.createContext({
   toggleColorMode: () => {},
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  setColorMode: (mode: PaletteMode) => {},
 });
 
 export default function RootLayout({
@@ -24,7 +28,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [mode, setMode] = React.useState<PaletteMode>("light");
+  const [cookies, setCookie] = useCookies([cookieName]);
+  let initialColorMode = "light";
+  if (cookies[cookieName] === "dark") {
+    initialColorMode = "dark";
+  }
+
+  const [mode, setMode] = React.useState<PaletteMode>(
+    initialColorMode as PaletteMode,
+  );
+
   const colorMode = React.useMemo(
     () => ({
       // The dark mode switch would invoke this method
@@ -32,6 +45,10 @@ export default function RootLayout({
         setMode((prevMode: PaletteMode) =>
           prevMode === "light" ? "dark" : "light",
         );
+      },
+      setColorMode: (mode: PaletteMode) => {
+        setMode(mode);
+        setCookie(cookieName, mode);
       },
     }),
     [],
