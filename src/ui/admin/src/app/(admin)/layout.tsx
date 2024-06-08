@@ -56,7 +56,7 @@ export default function RootLayout({
         setCookie(cookieName, mode);
       },
     }),
-    [],
+    [setCookie],
   );
 
   const theme = React.useMemo(() => createTheme(getDesignTokens(mode)), [mode]);
