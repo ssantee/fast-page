@@ -14,20 +14,25 @@ import MenuItem from "@mui/material/MenuItem";
 import User from "@/components/user";
 import Link from "next/link";
 import MuiLink from "@mui/material/Link";
-import { Amplify } from "aws-amplify";
-import config from "@/amplifyconfiguration.json";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import { useTheme } from "@mui/material/styles";
-import { useContext } from "react";
-import { ColorModeContext } from "@/app/(admin)/layout";
-import ColorModeToggle from "@/components/colorModeToggle";
+// import { useContext } from "react";
+// import { ColorModeContext } from "@/app/(admin)/layout";
 import { Skeleton } from "@mui/material";
-Amplify.configure(config, { ssr: true });
+import UserMenu from "@/components/userMenu";
+import { usePathname } from "next/navigation";
+import Logo from "@/components/logo";
 
-const pages = [{ label: "Dashboard", href: "/dashboard" }];
+const pages = [
+  { label: "Dashboard", href: "/dashboard" },
+  { label: "Analytics", href: "/analytics" },
+];
 const publicPages = [{ label: "Login", href: "/login" }];
 
 export default function Nav() {
+  // prevent SSR on certain components
+  // to avoid mis-matched classnames issue
+  // between server and client renders.
   const [isClient, setIsClient] = React.useState(false);
 
   React.useEffect(() => {
@@ -38,7 +43,8 @@ export default function Nav() {
   ]);
 
   const theme = useTheme();
-  const colorContext = useContext(ColorModeContext);
+  // const colorContext = useContext(ColorModeContext);
+  const pathname = usePathname();
   const renderPages = authStatus === "authenticated" ? pages : publicPages;
 
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
@@ -69,35 +75,17 @@ export default function Nav() {
         <Skeleton
           suppressHydrationWarning={true}
           variant="rectangular"
-          height={66}
+          height={92}
         ></Skeleton>
       )}
       {isClient && (
         <AppBar position="static" sx={{ mb: 3 }}>
           <Container maxWidth="xl">
             <Toolbar disableGutters>
-              <Typography
-                variant="h6"
-                noWrap
-                component="a"
-                href="/"
-                sx={{
-                  mr: 2,
-                  display: { xs: "none", md: "flex" },
-                  fontFamily: "monospace",
-                  fontWeight: 700,
-                  letterSpacing: ".3rem",
-                  color: "inherit",
-                  textDecoration: "none",
-                }}
-              >
-                LOGO
-              </Typography>
-
-              <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+              <Box sx={{ flexGrow: 0, display: { xs: "flex", md: "none" } }}>
                 <IconButton
                   size="large"
-                  aria-label="account of current user"
+                  aria-label="controls for user menu"
                   aria-controls="menu-appbar"
                   aria-haspopup="true"
                   onClick={handleOpenNavMenu}
@@ -122,114 +110,78 @@ export default function Nav() {
                     display: { xs: "block", md: "none" },
                   }}
                 >
-                  {renderPages.map((page) => (
-                    <MenuItem key={page.label} onClick={handleCloseNavMenu}>
-                      <Typography textAlign="center">
-                        <MuiLink href="/public/login" component={Link}>
-                          Login
-                        </MuiLink>
-                      </Typography>
-                    </MenuItem>
-                  ))}
+                  {renderPages.map((page) => {
+                    const active = page.href === pathname;
+                    return (
+                      <MenuItem key={page.label} onClick={handleCloseNavMenu}>
+                        <Typography textAlign="center">
+                          <MuiLink
+                            underline={active ? "always" : "none"}
+                            href={page.href}
+                            component={Link}
+                          >
+                            {page.label}
+                          </MuiLink>
+                        </Typography>
+                      </MenuItem>
+                    );
+                  })}
                 </Menu>
               </Box>
-              <Typography
-                variant="h5"
-                noWrap
-                component="a"
-                href="/"
+
+              <Logo theme={theme} />
+
+              <Box
                 sx={{
-                  mr: 2,
-                  display: { xs: "flex", md: "none" },
                   flexGrow: 1,
-                  fontFamily: "monospace",
-                  fontWeight: 700,
-                  letterSpacing: ".3rem",
-                  textDecoration: "none",
+                  display: { xs: "none", md: "flex" },
                 }}
               >
-                LOGO
-              </Typography>
-              <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-                {renderPages.map((page) => (
-                  <Button
-                    suppressHydrationWarning={true}
-                    key={page.label}
-                    onClick={handleCloseNavMenu}
-                    sx={{ my: 2, display: "block" }}
-                  >
-                    <MuiLink
-                      href={page.href}
-                      component={Link}
-                      color={theme.palette.primary.contrastText}
+                {renderPages.map((page) => {
+                  const active = page.href === pathname;
+                  return (
+                    <Button
+                      suppressHydrationWarning={true}
+                      key={page.label}
+                      onClick={handleCloseNavMenu}
+                      sx={{ my: 2, display: "block" }}
                     >
-                      {page.label}
-                    </MuiLink>
-                  </Button>
-                ))}
+                      <MuiLink
+                        underline={active ? "always" : "none"}
+                        href={page.href}
+                        component={Link}
+                        color={theme.palette.primary.contrastText}
+                      >
+                        {page.label}
+                      </MuiLink>
+                    </Button>
+                  );
+                })}
               </Box>
 
               <Box sx={{ flexGrow: 0 }}>
                 {user && (
                   <>
-                    <Tooltip title="Open settings">
-                      <Button
+                    <Tooltip title="Open user menu">
+                      <IconButton
                         onClick={handleOpenUserMenu}
                         sx={{
                           p: 0,
                           textTransform: "none",
                           color: theme.palette.primary.contrastText,
                         }}
+                        disableRipple={true}
                       >
                         <User user={user} />
-                      </Button>
+                      </IconButton>
                     </Tooltip>
-                    <Menu
-                      sx={{ mt: "45px" }}
-                      id="menu-appbar"
-                      anchorEl={anchorElUser}
-                      anchorOrigin={{
-                        vertical: "top",
-                        horizontal: "right",
-                      }}
-                      keepMounted
-                      transformOrigin={{
-                        vertical: "top",
-                        horizontal: "right",
-                      }}
-                      open={Boolean(anchorElUser)}
-                      onClose={handleCloseUserMenu}
-                    >
-                      <MenuItem key={"ColorMode"}>
-                        <ColorModeToggle
-                          toggleHandler={() => {
-                            colorContext.toggleColorMode();
-                          }}
-                          setColorMode={(mode) => {
-                            colorContext.setColorMode(mode);
-                          }}
-                          checked={theme.palette.mode === "dark"}
-                          setChecked={(checked) => {
-                            console.log("setting color mode");
-                            colorContext.setColorMode(
-                              checked ? "dark" : "light",
-                            );
-                          }}
-                        />
-                      </MenuItem>
-                      {signOut && (
-                        <MenuItem
-                          key={"LogOut"}
-                          onClick={() => {
-                            handleCloseUserMenu();
-                            signOut();
-                            window.location.href = "/";
-                          }}
-                        >
-                          Log out
-                        </MenuItem>
-                      )}
-                    </Menu>
+                    <UserMenu
+                      user={user}
+                      signOut={signOut}
+                      anchorElUser={anchorElUser}
+                      handleCloseUserMenu={handleCloseUserMenu}
+                      theme={theme}
+                    />
                   </>
                 )}
               </Box>

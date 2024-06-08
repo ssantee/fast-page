@@ -9,7 +9,12 @@ import getDesignTokens from "@/app/(admin)/theme";
 import * as React from "react";
 import { PaletteMode } from "@mui/material";
 import Nav from "@/components/nav";
+import Footer from "@/components/footer";
 import { useCookies } from "react-cookie";
+import { Amplify } from "aws-amplify";
+import config from "@/amplifyconfiguration.json";
+
+Amplify.configure(config, { ssr: true });
 
 const cookieName = "color-mode";
 // export const metadata: Metadata = {
@@ -66,6 +71,7 @@ export default function RootLayout({
                 <CssBaseline />
                 <Nav />
                 {children}
+                <Footer />
               </ThemeProvider>
             </ColorModeContext.Provider>
           </Authenticator.Provider>

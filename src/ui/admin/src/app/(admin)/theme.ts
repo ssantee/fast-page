@@ -10,22 +10,16 @@ const roboto = Roboto({
 
 const lightPalette = {
   primary: {
-    light: "#f3e997",
-    main: "#ecdb51",
-    dark: "#e4ad28",
-    contrastText: "#fff",
+    main: "#f1f1f1",
   },
   secondary: {
-    light: "#9ea3f4",
-    main: "#5161ec",
-    dark: "#2439da",
-    contrastText: "#000",
+    main: "#536dfe",
   },
 };
 const darkPalette = {
   primary: {
     light: "#000000",
-    main: "#EEEEEE",
+    main: "#455a64",
     dark: "#ffffff",
     contrastText: "#fff",
   },
@@ -50,6 +44,21 @@ const getDesignTokens = (mode: PaletteMode) => ({
       styleOverrides: {
         body: {
           fontFamily: roboto.style.fontFamily,
+        },
+      },
+    },
+    MuiLink: {
+      styleOverrides: {
+        underlineAlways: {
+          textDecorationColor: "rgba(183,179,179,0.8)",
+          textDecorationThickness: "2px",
+        },
+      },
+    },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          fontSize: ".8rem",
         },
       },
     },

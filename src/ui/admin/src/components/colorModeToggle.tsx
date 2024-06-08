@@ -9,6 +9,7 @@ interface ColorModeProps {
   setColorMode: (mode: PaletteMode) => void;
   checked: boolean;
   setChecked: (checked: boolean) => void;
+  fontSizeOverride?: string;
 }
 
 export default function ColorModeToggle(props: ColorModeProps) {
@@ -72,6 +73,8 @@ export default function ColorModeToggle(props: ColorModeProps) {
 
   return (
     <FormControlLabel
+      sx={props.fontSizeOverride ? { fontSize: props.fontSizeOverride } : {}}
+      disableTypography={!!props.fontSizeOverride}
       checked={props.checked}
       onChange={handleChange}
       control={<MaterialUISwitch sx={{ m: 1 }} />}
