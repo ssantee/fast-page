@@ -36,6 +36,7 @@ export class CICDStack extends Stack {
         primaryOutputDirectory: "cdk.out",
         commands: [
           `aws s3 cp s3://${props.appCfg.configBucketName}/config.json ./config`,
+          `aws s3 cp s3://${props.appCfg.configBucketName}/amplifyconfiguration.json ./src/ui/admin/src`,
           "npm ci",
           "npm run build",
           "npx cdk synth",
