@@ -13,6 +13,7 @@ import Footer from "@/components/footer";
 import { useCookies } from "react-cookie";
 import { Amplify } from "aws-amplify";
 import config from "@/amplifyconfiguration.json";
+import { ColorModeContext } from "@/util/colorContext";
 
 Amplify.configure(config, { ssr: true });
 
@@ -21,12 +22,6 @@ const cookieName = "color-mode";
 //   title: "FastPage Admin Site",
 //   description: "Admin site for FastPage",
 // };
-
-export const ColorModeContext = React.createContext({
-  toggleColorMode: () => {},
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  setColorMode: (mode: PaletteMode) => {},
-});
 
 export default function RootLayout({
   children,

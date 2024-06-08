@@ -4,7 +4,7 @@ import MenuItem from "@mui/material/MenuItem";
 import User from "@/components/user";
 import ColorModeToggle from "@/components/colorModeToggle";
 import Menu from "@mui/material/Menu";
-import { ColorModeContext } from "@/app/(admin)/layout";
+import { ColorModeContext } from "@/util/colorContext";
 import { useContext } from "react";
 import { Theme } from "@mui/system";
 
