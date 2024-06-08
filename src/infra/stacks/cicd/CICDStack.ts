@@ -46,6 +46,7 @@ export class CICDStack extends Stack {
             actions: ["s3:GetObject"],
             resources: [
               `arn:aws:s3:::${props.appCfg.configBucketName}/config.json`,
+              `arn:aws:s3:::${props.appCfg.configBucketName}/amplifyconfiguration.json`,
             ],
             effect: Effect.ALLOW,
           }),
