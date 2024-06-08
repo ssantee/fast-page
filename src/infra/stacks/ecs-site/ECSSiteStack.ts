@@ -94,6 +94,7 @@ export class ECSSiteStack extends Stack {
               zoneName: props.deployEnvDomain,
             },
           ),
+          assignPublicIp: true,
         },
       );
 
