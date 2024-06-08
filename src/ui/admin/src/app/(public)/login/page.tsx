@@ -19,7 +19,7 @@ import Item from "@mui/material/Stack";
 Amplify.configure(config, { ssr: true });
 const copyYear = new Date().getFullYear();
 
-export function Login(props: WithAuthenticatorProps) {
+export function Login() {
   const { authStatus } = useAuthenticator((context) => [context.user]);
   initAuthEventListener();
 
