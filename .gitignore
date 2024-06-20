@@ -16,6 +16,7 @@ cdk.out
 test/auth.test.ts
 test/AuthService.ts
 config/config.json
+local-env.json
 
 # next.js
 /.pnp
