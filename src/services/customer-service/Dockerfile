@@ -1,4 +1,4 @@
-FROM public.ecr.aws/docker/library/golang:1.19 as build-image
+FROM public.ecr.aws/docker/library/golang:1.20 as build-image
 WORKDIR /src
 COPY go.mod go.sum main.go ./
 RUN GOARCH=arm64 GOOS=linux go build -tags lambda.norpc -o lambda-handler
