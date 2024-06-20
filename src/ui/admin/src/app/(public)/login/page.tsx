@@ -2,7 +2,6 @@
 import { Amplify } from "aws-amplify";
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
-import config from "../../../amplifyconfiguration.json";
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
@@ -14,8 +13,10 @@ import { Hub } from "aws-amplify/utils";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Item from "@mui/material/Stack";
+import { Environment } from "@/util/environment";
 
-Amplify.configure(config, { ssr: true });
+Amplify.configure(Environment.GetAmplifyConfigForEnvironment(), { ssr: true });
+
 const copyYear = new Date().getFullYear();
 
 function Login() {

@@ -6,9 +6,9 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import getDesignTokens from "@/app/(admin)/theme";
 import { Amplify } from "aws-amplify";
-import config from "@/amplifyconfiguration.json";
+import { Environment } from "@/util/environment";
 
-Amplify.configure(config, { ssr: true });
+Amplify.configure(Environment.GetAmplifyConfigForEnvironment(), { ssr: true });
 
 const AllTheProviders = ({
   children,

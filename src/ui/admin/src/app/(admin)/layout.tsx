@@ -12,10 +12,10 @@ import Nav from "@/components/nav";
 import Footer from "@/components/footer";
 import { useCookies } from "react-cookie";
 import { Amplify } from "aws-amplify";
-import config from "@/amplifyconfiguration.json";
 import { ColorModeContext } from "@/util/colorContext";
+import { Environment } from "@/util/environment";
 
-Amplify.configure(config, { ssr: true });
+Amplify.configure(Environment.GetAmplifyConfigForEnvironment(), { ssr: true });
 
 const cookieName = "color-mode";
 // export const metadata: Metadata = {
