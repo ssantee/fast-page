@@ -74,16 +74,20 @@ export default class ServerlessServiceGo extends Construct {
       },
     );
 
-    this.lambdaFunction = new DockerImageFunction(this, "Function", {
-      code: codeAsset,
-      architecture: Architecture.ARM_64,
-      role: role,
-      description: "FP API Function",
-      timeout: Duration.seconds(30),
-      environment: {
-        DEPLOY_ENV: props.deployEnv,
-        TABLE_NAME: appTableName,
+    this.lambdaFunction = new DockerImageFunction(
+      this,
+      `Function${props.serviceName}`,
+      {
+        code: codeAsset,
+        architecture: Architecture.ARM_64,
+        role: role,
+        description: `FP API Function - ${props.serviceName}`,
+        timeout: Duration.seconds(30),
+        environment: {
+          DEPLOY_ENV: props.deployEnv,
+          TABLE_NAME: appTableName,
+        },
       },
-    });
+    );
   }
 }
