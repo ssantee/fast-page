@@ -25,6 +25,9 @@ describe("MgmtAcctDNSRoleStack test suite", () => {
         apiDomain: mgmtEnv.apiDomain,
         devEnv: appCfg.devEnv,
         prodEnv: appCfg.prodEnv,
+        domainList: appCfg.getDomainsFromConfig(),
+        tld: appCfg.tld,
+        tldHzId: appCfg.tldHzId,
       },
     );
     MgmtAcctDNSRoleStackTemplate = Template.fromStack(mgmtAcctDNSRoleStack);

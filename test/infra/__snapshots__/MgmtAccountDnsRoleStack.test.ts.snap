@@ -208,15 +208,15 @@ exports[`Matches snapshot 1`] = `
                   "Condition": {
                     "ForAllValues:StringLike": {
                       "route53:ChangeResourceRecordSetsNormalizedRecordNames": [
-                        "dev.fp.santee.cloud",
-                        "prod.fp.santee.cloud",
                         "fp.santee.cloud",
                         "fpadmin.santee.cloud",
-                        "dev.fpadmin.santee.cloud",
-                        "prod.fpadmin.santee.cloud",
                         "fpapi.santee.cloud",
-                        "prod.fpapi.santee.cloud",
+                        "dev.fp.santee.cloud",
+                        "dev.fpadmin.santee.cloud",
                         "dev.fpapi.santee.cloud",
+                        "prod.fp.santee.cloud",
+                        "prod.fpadmin.santee.cloud",
+                        "prod.fpapi.santee.cloud",
                       ],
                     },
                   },

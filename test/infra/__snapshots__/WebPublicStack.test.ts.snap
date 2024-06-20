@@ -431,9 +431,6 @@ exports[`Matches snapshot 1`] = `
           "IgnorePublicAcls": true,
           "RestrictPublicBuckets": true,
         },
-        "VersioningConfiguration": {
-          "Status": "Enabled",
-        },
       },
       "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Retain",
@@ -551,9 +548,6 @@ exports[`Matches snapshot 1`] = `
           "BlockPublicPolicy": true,
           "IgnorePublicAcls": true,
           "RestrictPublicBuckets": true,
-        },
-        "VersioningConfiguration": {
-          "Status": "Enabled",
         },
       },
       "Type": "AWS::S3::Bucket",
@@ -779,9 +773,6 @@ exports[`Matches snapshot 1`] = `
           "BlockPublicPolicy": true,
           "IgnorePublicAcls": true,
           "RestrictPublicBuckets": true,
-        },
-        "VersioningConfiguration": {
-          "Status": "Enabled",
         },
       },
       "Type": "AWS::S3::Bucket",
