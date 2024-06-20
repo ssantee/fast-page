@@ -15,6 +15,9 @@ interface MgmtAcctDNSProps extends StackProps {
   apiDomain: string;
   devEnv: EnvConfig;
   prodEnv: EnvConfig;
+  domainList: Array<string>;
+  tld: string;
+  tldHzId: string;
 }
 
 export class MgmtAcctDNSRoleStack extends Stack {
@@ -57,23 +60,13 @@ export class MgmtAcctDNSRoleStack extends Stack {
                 "route53:GetHostedZone",
                 "route53:ChangeResourceRecordSets",
               ],
-              // This example assumes the RecordSet subdomain.somexample.com
-              // is contained in the HostedZone
               resources: [
                 `arn:aws:route53:::hostedzone/${newZone.hostedZoneId}`,
               ],
               conditions: {
                 "ForAllValues:StringLike": {
                   "route53:ChangeResourceRecordSetsNormalizedRecordNames": [
-                    "dev.fp.santee.cloud",
-                    "prod.fp.santee.cloud",
-                    "fp.santee.cloud",
-                    "fpadmin.santee.cloud",
-                    "dev.fpadmin.santee.cloud",
-                    "prod.fpadmin.santee.cloud",
-                    "fpapi.santee.cloud",
-                    "prod.fpapi.santee.cloud",
-                    "dev.fpapi.santee.cloud",
+                    ...props.domainList,
                   ],
                 },
               },
@@ -98,8 +91,8 @@ export class MgmtAcctDNSRoleStack extends Stack {
       this,
       "TLDZone",
       {
-        hostedZoneId: "Z02022183L2XHLGIP6A83",
-        zoneName: "santee.cloud",
+        hostedZoneId: props.tldHzId,
+        zoneName: props.tld,
       },
     );
 

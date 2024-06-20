@@ -21,6 +21,7 @@ const mgmtStage = new MgmtAccountStage(app, `FPMgmtAcctStage`, {
   prodEnv: appCfg.prodEnv,
   iamPrincipalAccountNo: mgmtEnv.account,
   apiDomain: mgmtEnv.apiDomain,
+  appCfg: appCfg,
 });
 
 const cicdStack = new CICDStack(app, `FPCICDStack`, {

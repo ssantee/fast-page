@@ -25,6 +25,8 @@ export type AppConfig = {
   parameterNames: ParamConfig;
   configBucketName: string;
   repositoryArn: string;
+  tld: string;
+  tldHzId: string;
 };
 
 export class AppConfiguration {
@@ -35,14 +37,20 @@ export class AppConfiguration {
   public configBucketName: string;
   public repositoryArn: string;
   public deployableEnvs: EnvConfig[] = [];
+  public tld: string;
+  public tldHzId: string;
+  private appCfg: AppConfig;
 
   constructor(configData: AppConfig) {
+    this.appCfg = configData;
     this.mgmtEnv = this.getEnvByName(configData.environments, "root");
     this.prodEnv = this.getEnvByName(configData.environments, "prod");
     this.devEnv = this.getEnvByName(configData.environments, "dev");
     this.paramNames = configData.parameterNames;
     this.configBucketName = configData.configBucketName;
     this.repositoryArn = configData.repositoryArn;
+    this.tld = configData.tld;
+    this.tldHzId = configData.tldHzId;
     this.deployableEnvs = configData.environments.filter(
       (e) => e.name !== "root",
     );
@@ -63,5 +71,11 @@ export class AppConfiguration {
 
   private getEnvByName(envs: EnvConfig[], acctEnv: string): EnvConfig {
     return envs.find((e) => e.name === acctEnv)!;
+  }
+
+  public getDomainsFromConfig(): string[] {
+    return this.appCfg.environments.flatMap((env) => {
+      return [env.domain, env.adminDomain, env.apiDomain];
+    });
   }
 }

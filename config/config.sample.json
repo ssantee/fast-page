@@ -1,6 +1,8 @@
 {
   "repositoryArn": "arn:aws:codecommit:us-west-1:123456789:my-repo",
   "configBucketName": "some-bucket-name",
+  "tld": "example.com",
+  "tldHzId": "Z02012345678",
   "environments": [
     {
       "name": "root",

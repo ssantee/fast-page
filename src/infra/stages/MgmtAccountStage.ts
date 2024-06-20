@@ -1,6 +1,6 @@
 import { Stage, StageProps } from "aws-cdk-lib";
 import { Construct } from "constructs";
-import { EnvConfig } from "../util/AppConfiguration";
+import { AppConfiguration, EnvConfig } from "../util/AppConfiguration";
 import { MgmtAcctDNSRoleStack } from "../stacks/dns/MgmtAcctDNSRoleStack";
 
 export interface MgmtAccountStageProps extends StageProps {
@@ -9,6 +9,7 @@ export interface MgmtAccountStageProps extends StageProps {
   iamPrincipalAccountNo: string;
   devEnv: EnvConfig;
   prodEnv: EnvConfig;
+  appCfg: AppConfiguration;
 }
 
 export class MgmtAccountStage extends Stage {
@@ -23,6 +24,9 @@ export class MgmtAccountStage extends Stage {
       apiDomain: props.mgmtEnv.apiDomain,
       devEnv: props.devEnv,
       prodEnv: props.prodEnv,
+      domainList: props.appCfg.getDomainsFromConfig(),
+      tld: props.appCfg.tld,
+      tldHzId: props.appCfg.tldHzId,
     });
   }
 }
