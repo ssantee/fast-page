@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "startl": "next start",
+    "start": "./build-start.sh",
     "lint": "next lint",
     "test": "jest"
   },
