@@ -13,17 +13,20 @@ export default function Dashboard() {
         <p>Some copy</p>
       </div>
       <Grid container spacing={2}>
-        <Grid xs={6} md={8}>
-          <Paper>xs=6 md=8</Paper>
-        </Grid>
-        <Grid xs={6} md={4}>
-          <Paper>xs=6 md=4</Paper>
-        </Grid>
-        <Grid xs={6} md={4}>
-          <Paper>xs=6 md=4</Paper>
+        <Grid xs={12} md={8}>
+          <Paper suppressHydrationWarning={true}>xs=12 md=8</Paper>
         </Grid>
         <Grid xs={6} md={8}>
-          <Paper>xs=6 md=8</Paper>
+          <Paper suppressHydrationWarning={true}>xs=6 md=8</Paper>
+        </Grid>
+        <Grid xs={6} md={4}>
+          <Paper suppressHydrationWarning={true}>xs=6 md=4</Paper>
+        </Grid>
+        <Grid xs={6} md={4}>
+          <Paper suppressHydrationWarning={true}>xs=6 md=4</Paper>
+        </Grid>
+        <Grid xs={6} md={8}>
+          <Paper suppressHydrationWarning={true}>xs=6 md=8</Paper>
         </Grid>
       </Grid>
     </Container>
