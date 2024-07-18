@@ -2,7 +2,7 @@
 
 ## Overview
 
-Repository to house infrastructure and application code for the fast-page project. 
+Repository to house infrastructure and application code for the LinkLeveled project. 
 
 The project will create infrastructure for an app, including:
 - Public-facing S3 site
@@ -13,21 +13,43 @@ The project will create infrastructure for an app, including:
 - Multiple environments (dev, prod)
 - DNS configurations for all of the above
 
+## AWS Accounts
+This project assumes a multi-account setup. Eg:
+
+- Management Account
+  - Development Account
+  - Production Account
+
 ## Configuration
 Examine the directory `/config` for the example configuration file. This file should be customized and renamed to `config.json` before attempting to `cdk synth` or `cdk deploy`.
 
-Because the configuration file contains sensitive information, it is not checked into source control. It should be stored in a bucket in the management account. The pipeline will download the configuration file from the bucket before deploying the stack. `config.configBucketName` should be set to the name of the bucket where the live configuration file is stored. 
+### configBucketName
+
+Because the configuration file contains sensitive information, it is not checked into source control. It should be stored in a bucket in the management account. `config.configBucketName` should be set to the name of the bucket where the live configuration file is stored. The pipeline will download the configuration file from the bucket before synth/deploy.
+
+The config bucket permissions must allow read access from codebuild.amazonaws.com service principal from the management account.
+
+### environments
+
+The environments section of the configuration file should be customized to match the desired environment names, account numbers, etc.
+
+The app uses SSM parameters to allow access to cdk-generated values between the CDK stacks. The `parameterNames` section of the config allows customization of the names of the SSM parameters.
+
+#### pipelineRequiresApproval
+
+When `true`, the pipeline will pause at the manual approval stage. When `false`, the pipeline will proceed without manual intervention.
 
 ## DNS
-Hosted zone for primary domain lives in the management account. 
-Child accounts each have a hosted zone for their subdomain.
+The hosted zone for primary domain lives in the management account. 
 
-## CDK
+This project assumes the root domain HZ exists in the management account.
+
+Child accounts each have a hosted zone for their subdomains.
 
 ## Docker
 Services in this project are containerized lambdas. The Dockerfile for each service is located in the service's directory. 
 
-On `cdk deploy`, the Dockerfile is built and pushed to ECR in the admin account?. Use this command to log docker into ecr: `aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <AccountNumber>.dkr.ecr.us-east-1.amazonaws.com`
+On `cdk deploy`, the Dockerfile is built and pushed to ECR. Use this command to log docker into ecr: `aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <AccountNumber>.dkr.ecr.us-east-1.amazonaws.com`
 
 The admin site is an ECS service. The dockerfile is located in the `src/ui/admin` directory.
 
@@ -48,31 +70,41 @@ aws cognito-idp admin-set-user-password \
 ### Working locally with lambdas
 Use SAM CLI for local iteration.
 https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-cdk-testing.html
-synth
-
-`cdk synth --no-staging`
 https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-cdk-getting-started.html
 
-Build image:
+** Must `synth` before `sam build` **
 
+`cdk synth --no-staging` copies the source to cdk.out. `sam build` uses the source in cdk.out to build the docker image. Need to determine where the no-staging arg came from. Doesn't appear to be necessary.
+
+Synth
+
+Synth everything:
+`cdk synth --no-staging`
+
+Synth specific stack:
+`cdk synth FPDevStage-FPDevFunctionsStack --no-staging`
+
+Build image:
 `sam build -t ./cdk.out/assembly-FPDevStage/FPDevStageFPDevFunctionsStack1DC8F43E.template.json FastPagepageserviceFunctionpageserviceA69CBF46`
 
-Get Creds for Lambda Role:
+#### Auth/IAM
+This requires a role ARN from the dev account, with permissions to be assumed by the management account. The management account profile must have permissions to assume the role in the dev account.
+```aws sts assume-role --role-arn <lambda-role-arn (from dev account)> --role-session-name AWSCLI-Session --profile <profile-name (mgmt account)>```
 
-```aws sts assume-role --role-arn <lambda-role-arn> --role-session-name AWSCLI-Session --profile <profile-name (mgmt account)>```
+Copy local-env.sample.json, in the project root, and rename to local-env.json. Fill in the assumed role creds.
 
-```aws sts assume-role --role-arn arn:aws:iam::590184120807:role/OrganizationAccountAccessRole --role-session-name AWSCLI-Session --profile default```
+Alternately, use `./env-refresh.sh <role arn>` to refresh the local-env.json file with the assumed role creds. 
 
-Add role creds to local-env.json in project root.
+`sam local ...` must be restarted after refreshing the env file.
 
 Start Local Lambda(s):
 `sam local start-api -t ./cdk.out/assembly-FPDevStage/FPDevStageFPDevFunctionsStack1DC8F43E.template.json --container-env-vars ./local-env.json -d 9001`
 
-
+#### Complete example
 ```bash
 sam build -t ./cdk.out/assembly-FPDevStage/FPDevStageFPDevFunctionsStack1DC8F43E.template.json FastPagepageserviceFunctionpageserviceA69CBF46
 
-aws sts assume-role --role-arn arn:aws:iam::590184120807:role/OrganizationAccountAccessRole --role-session-name AWSCLI-Session --profile default
+aws sts assume-role --role-arn arn:aws:iam::12345678901:role/OrganizationAccountAccessRole --role-session-name AWSCLI-Session --profile default
 
 sam local start-api -t ./cdk.out/assembly-FPDevStage/FPDevStageFPDevFunctionsStack1DC8F43E.template.json --container-env-vars ./local-env.json -d 9001
 
@@ -81,7 +113,7 @@ sam local start-api -t ./cdk.out/assembly-FPDevStage/FPDevStageFPDevFunctionsSta
 
 ### Warning
 
-The following became an issue with non-unique logical IDs for the lambdas.  
+The following became an issue with cdk-generated logical IDs for the lambdas.  
 
 *Issue: When calling SAM CLI like this
 ```bash
@@ -93,3 +125,5 @@ SAM cannot locate one of the functions defined within the same template. It can 
 When one of the functions is manually removed from [cdkoutputstack].template.json, the other function can be located by SAM CLI.
 
 https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-cdk-testing.html
+
+Resolution: Add unique logical IDs to the functions in the CDK stack. 
