@@ -40,11 +40,7 @@ The app uses SSM parameters to allow access to cdk-generated values between the 
 When `true`, the pipeline will pause at the manual approval stage. When `false`, the pipeline will proceed without manual intervention.
 
 ## DNS
-The hosted zone for primary domain lives in the management account. 
-
-This project assumes the root domain HZ exists in the management account.
-
-Child accounts each have a hosted zone for their subdomains.
+This project assumes the TLD hosted zone exists in the management account. The TLD and its hosted zone id must be provided in the configuration file, as `tld` and `tldHzId`.
 
 ## Docker
 Services in this project are containerized lambdas. The Dockerfile for each service is located in the service's directory. 
