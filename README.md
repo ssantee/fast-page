@@ -25,11 +25,12 @@ This project assumes a multi-account setup. Eg:
   - Development Account
   - Production Account
 
-Prerequisites for working with CDK can be found here: https://docs.aws.amazon.com/cdk/v2/guide/home.html
+Prerequisites for working with CDK can be found in the [AWS docs](https://docs.aws.amazon.com/cdk/v2/guide/home.html). 
 
 Other useful resources:
- - https://github.com/aws-samples/aws-cdk-examples
- - https://docs.aws.amazon.com/cdk/v2/guide/best-practices.html
+ - [CDK Workshop](https://cdkworkshop.com/)
+ - [CDK Best Practices](https://docs.aws.amazon.com/cdk/v2/guide/best-practices.html)
+ - [CDK Examples](https://github.com/aws-samples/aws-cdk-examples)
 
 # Configuration
 Examine the directory `/config` for the example configuration file. This file should be customized and renamed to `config.json` before attempting to `cdk synth` or `cdk deploy`.
@@ -37,19 +38,16 @@ Examine the directory `/config` for the example configuration file. This file sh
 Note that the configuration in `/config` does not have separate dev/stage/prod versions. Config for each deployment target lives in the same file.
 
 ## configBucketName
-
 Because the configuration file contains sensitive information, it is not checked into source control. It should be stored in a bucket in the management account. `config.configBucketName` should be set to the name of the bucket where the live configuration file is stored. The pipeline will download the configuration file from the bucket before synth/deploy.
 
 The config bucket permissions must allow read access from codebuild.amazonaws.com service principal from the management account.
 
 ## environments
-
 The environments section of the configuration file should be customized to match the desired environment names, account numbers, etc.
 
 The app uses SSM parameters to allow access to cdk-generated values between the CDK stacks. The `parameterNames` section of the config allows customization of the names of the SSM parameters.
 
 ## pipelineRequiresApproval
-
 When `true`, the pipeline will pause at the manual approval stage. When `false`, the pipeline will proceed without manual intervention.
 
 ## DNS
