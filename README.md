@@ -16,6 +16,8 @@ A collection of services in `src/services`
 
 An admin site in `src/ui/admin`
 
+Find a detailed chart illustrating the entire CDK project structure [here](./docs/cdk-dia-all.png). This chart was generated with [cdk-dia](https://github.com/pistazie/cdk-dia).
+
 # AWS Accounts
 This project assumes a multi-account setup. Eg:
 
@@ -131,7 +133,9 @@ aws cognito-idp admin-set-user-password \
 --permanent
 ```
 
-## Pipeline
+# Pipeline
+
+TODO
 
 # Notes
 
