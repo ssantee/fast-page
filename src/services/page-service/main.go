@@ -13,7 +13,6 @@ import (
 	"log"
 	"os"
 	"regexp"
-	"time"
 )
 
 var svc *dynamodb.Client
@@ -158,8 +157,10 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 }
 
 func main() {
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
+	//ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	//defer cancel()
+
+	ctx := context.Background()
 
 	cfg, err := config.LoadDefaultConfig(ctx,
 		config.WithRegion("us-east-1"),
