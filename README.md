@@ -118,6 +118,20 @@ aws sts assume-role --role-arn arn:aws:iam::12345678901:role/OrganizationAccount
 sam local start-api -t ./cdk.out/assembly-FPDevStage/FPDevStageFPDevFunctionsStack1DC8F43E.template.json --container-env-vars ./local-env.json -d 9001
 ```
 
+## Working with deployed lambdas
+
+The deployed lambdas include Cognito authorization. Outline the process of obtaining an Authorization token to make requests through API Gateway.
+
+Use the following CLI command to obtain a token. Replace the USERNAME, PASSWORD, and CLIENT-ID with the appropriate values.
+
+```bash
+aws cognito-idp initiate-auth --auth-flow USER_PASSWORD_AUTH --auth-parameters USERNAME=user@some.com,PASSWORD=12345 --client-id <USER-POOL-WEB-CLIENT-ID>
+```
+
+https://docs.aws.amazon.com/cli/latest/reference/cognito-idp/#cli-aws-cognito-idp
+
+Take the `IdToken` from the response and use it as the value of the Authorization header in the request to the API Gateway.
+
 ## Cognito
 ### Testing
 
@@ -130,6 +144,10 @@ aws cognito-idp admin-set-user-password \
 --password <password> \
 --permanent
 ```
+
+TODO - include command to create user via CLI
+
+https://docs.aws.amazon.com/cli/latest/reference/cognito-idp/admin-create-user.html
 
 # Pipeline
 
