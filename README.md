@@ -48,10 +48,7 @@ The environments section of the configuration file should be customized to match
 
 The app uses SSM parameters to allow access to cdk-generated values between the CDK stacks. The `parameterNames` section of the config allows customization of the names of the SSM parameters. 
 
-## pipelineRequiresApproval
-When `true`, the pipeline will pause at the manual approval stage. When `false`, the pipeline will proceed without manual intervention.
-
-## DNS
+### DNS
 The project allows for the creation of an application URL structure that includes a subdomain for each of the app, API, and admin site, then a second level of subdomains for each environment.
 
 It's assumed that the TLD hosted zone exists in the management account, and is **not managed by CDK**. The TLD and its hosted zone id must be provided in the configuration file, as `tld` and `tldHzId`. All other hosted zones are created and managed by CDK.
@@ -83,6 +80,9 @@ Given TLD `example.com` and desired app subdomain `app.example.com`:
 | Prod        | Site     | prod.app.example.com      |
 | Prod        | Admin    | prod.appadmin.example.com |
 | Prod        | API      | prod.appapi.example.com   |
+
+## pipelineRequiresApproval
+When `true`, the pipeline will pause at the manual approval stage. When `false`, the pipeline will proceed without manual intervention.
 
 # Docker
 Services in this project are containerized lambdas. Source can be found at `src/services`. The Dockerfile for each service is located in the service's directory. 
