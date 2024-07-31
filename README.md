@@ -44,9 +44,7 @@ Because the configuration file contains sensitive information, it is not checked
 The config bucket's permissions must allow read access from codebuild.amazonaws.com service principal from the management account.
 
 ## environments
-The environments section of the configuration file should be customized to match the desired environment names, account numbers, etc.
-
-The app uses SSM parameters to allow access to cdk-generated values between the CDK stacks. The `parameterNames` section of the config allows customization of the names of the SSM parameters. 
+The environments section of the configuration file should be customized to match the desired environment names, account numbers, and domain names.
 
 ### DNS
 The project allows for the creation of an application URL structure that includes a subdomain for each of the app, API, and admin site, then a second level of subdomains for each environment.
@@ -84,10 +82,13 @@ Given TLD `example.com` and desired app subdomain `app.example.com`:
 ## pipelineRequiresApproval
 When `true`, the pipeline will pause at the manual approval stage. When `false`, the pipeline will proceed without manual intervention.
 
+## parameterNames
+The app uses SSM parameters to allow access to cdk-generated values between the CDK stacks. The `parameterNames` section of the config allows customization of the names of the SSM parameters.
+
 # Docker
 Services in this project are containerized lambdas. Source can be found at `src/services`. The Dockerfile for each service is located in the service's directory. 
 
-When working locally: On `cdk deploy`, the Dockerfile is built and the image pushed to ECR. Use this command to log docker into ecr before attempting to deploy: 
+When working locally: On `cdk deploy`, an image is built and pushed to ECR. Use this command to log docker into ecr before attempting to deploy: 
 
 ```Bash 
 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ACCOUNTNUMBER.dkr.ecr.us-east-1.amazonaws.com
